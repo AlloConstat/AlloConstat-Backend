@@ -14,11 +14,14 @@ const verifyToken = (req, res, next) => {
     });
 };
 
-const isAdmin = (req, res, next) => {
-    if (req.userRole !== 'admin') {
-        return res.status(ResponseModels.UNAUTHORIZED.status).send(ResponseModels.UNAUTHORIZED);
+const isAdmin = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.userId);
+        if (user.role !== 'admin') return res.status(ResponseModels.FORBIDDEN.status).send(ResponseModels.FORBIDDEN);
+        next();
+    } catch (error) {
+        res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
     }
-    next();
 };
 
 module.exports = { verifyToken, isAdmin };
