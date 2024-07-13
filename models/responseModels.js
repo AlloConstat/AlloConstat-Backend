@@ -7,6 +7,10 @@ const ResponseModels = {
       status: 400,
       message: "Bad Request"
     },
+    CREATED: {
+        status: 201,
+        message: "Resource created successfully",
+    },
     UNAUTHORIZED: {
       status: 401,
       message: "Unauthorized"

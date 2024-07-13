@@ -9,6 +9,8 @@ require('./config/passport'); // Assurez-vous de configurer passport
 
 const authRoutes = require('./routes/authRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
+const constatRoutes = require('./routes/constatRoutes.js');
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,6 +19,7 @@ app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/constats', constatRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
