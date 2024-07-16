@@ -16,8 +16,8 @@ const verifyToken = (req, res, next) => {
 
 const isAdmin = async (req, res, next) => {
     try {
-        const user = await User.findById(req.userId);
-        if (user.role !== 'admin') return res.status(ResponseModels.FORBIDDEN.status).send(ResponseModels.FORBIDDEN);
+        
+        if (req.userRole !== 'admin') return res.status(ResponseModels.FORBIDDEN.status).send(ResponseModels.FORBIDDEN);
         next();
     } catch (error) {
         res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);

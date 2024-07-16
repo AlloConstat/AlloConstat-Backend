@@ -4,7 +4,7 @@ const ResponseModels = require('../models/responseModels');
 // Create Constat
 exports.createConstat = async (req, res) => {
     try {
-        console.log('le contsat',req.body);
+        
         const newConstat = new Constat(req.body);
         await newConstat.save();
         res.status(ResponseModels.CREATED.status).send({ ...ResponseModels.CREATED, data: newConstat });

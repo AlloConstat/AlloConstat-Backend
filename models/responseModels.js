@@ -30,4 +30,3 @@ const ResponseModels = {
   };
   
   module.exports = ResponseModels;
-  

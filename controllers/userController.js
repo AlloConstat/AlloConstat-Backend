@@ -20,9 +20,21 @@ exports.getUserById = async (req, res) => {
     }
 };
 
+
+exports.getUserByRegion = async (req, res) => {
+    try {
+        const { region } = req.params;
+        const users = await User.find({ region });
+        if (users.length === 0) return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
+        res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, data: users });
+    } catch (err) {
+        res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
+    }
+};
+
 exports.updateUser = async (req, res) => {
     try {
-        console.log('ceci le user :',req.body);
+        
         const { nom, prenom, email, mot_de_passe, telephone, region, role } = req.body;
         const user = await User.findById(req.params.id);
     
