@@ -4,7 +4,7 @@ const authController = require('../controllers/authController');
 const passport = require('passport');
 
 
-// Routes d'authentification
+
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 

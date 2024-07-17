@@ -24,4 +24,15 @@ const isAdmin = async (req, res, next) => {
     }
 };
 
+
+const isSuperAdmin = async (req, res, next) => {
+    try {
+        
+        if (req.userRole !== 'superAdmin') return res.status(ResponseModels.FORBIDDEN.status).send(ResponseModels.FORBIDDEN);
+        next();
+    } catch (error) {
+        res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
+    }
+};
+
 module.exports = { verifyToken, isAdmin };
