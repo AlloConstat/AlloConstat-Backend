@@ -16,11 +16,6 @@ async function fillPDF(templatePath, outputPath, formData) {
         const customFontBytes = fs.readFileSync(customFontPath);
         const customFont = await pdfDoc.embedFont(customFontBytes);
 
-        // Load the initial impact image
-        const initialImpactImagePath = path.join(__dirname, '../test.png'); // Change to your image path
-        const initialImpactImageBytes = fs.readFileSync(initialImpactImagePath);
-        const initialImpactImage = await pdfDoc.embedPng(initialImpactImageBytes); // Or embedJpg if your image is a JPEG
-
         const pages = pdfDoc.getPages();
         const firstPage = pages[0];
 
@@ -31,7 +26,7 @@ async function fillPDF(templatePath, outputPath, formData) {
             blesses: { 
                 yes: { x: 535, y: 721 }, // Position for "Oui"
                 no: { x: 458, y: 721 }   // Position for "Non"
-            }, // x: 80, y: 680
+            }, 
             degats_materiels: { 
                 yes: { x: 136, y: 687 }, // Position for "Oui"
                 no: { x: 65, y: 687 }   // Position for "Non"
@@ -40,59 +35,65 @@ async function fillPDF(templatePath, outputPath, formData) {
             vehicles: {
                 A: {
                     nom: { x: 50, y: 600 },
-                    marque: { x: 100, y: 350 },
+                    marque: { x: 91, y: 349 },
                     numeroImmatriculation: { x: 120, y: 332 },
                     degatsApparents: { x: 40, y: 130 },
                     observations: { x: 40, y: 100 },
-                    sensSuiviVenants: { x: 80, y: 300 },
-                    sensSuiviAllants: { x: 80, y: 285 },
-                    pointDeChocInitial: { x: 500, y: 500 },
+                    sensSuiviVenants: { x: 72, y: 300 },
+                    sensSuiviAllants: { x: 65, y: 284 },
+                    pointDeChocInitial: { x: 50, y: 50 },
                     photos: { x: 450, y: 360 },
                     assurance: {
                         nom: { x: 110, y: 632 },
                         numeroAssurance: { x: 118, y: 615 },
-                        localisation: { x: 80, y: 598 },
-                        dateValiditeDebut: { x: 140, y: 565 },
-                        dateValiditeFin: { x: 50, y: 565 },
+                        localisation: { x: 60, y: 598 },
+                        date_validiteDebut: { x: 140, y: 565 },
+                        date_validiteFin: { x: 50, y: 565 },
                     },
                     conducteur: {
-                        nom: { x: 80, y: 537 },
-                        prenom: { x: 80, y: 520 },
-                        adresse: { x: 80, y: 503 },
+                        nom: { x: 55, y: 537 },
+                        prenom: { x: 64, y: 520 },
+                        adresse: { x: 64, y: 503 },
                         numeroPermis: { x: 130, y: 487 },
                         dateDelivration: { x: 80, y: 470 },
                     },
                     assure: {
-                        nom: { x: 70, y: 433 },
-                        prenom: { x: 70, y: 418 },
+                        nom: { x: 54, y: 433 },
+                        prenom: { x: 64, y: 416 },
                         adresse: { x: 70, y: 400 },
                         tel: { x: 160, y: 383 },
                     },
                     circonstances: { x: 950, y: 60 }
                 },
                 B: {
-                    nom: { x: 50, y: 450 },
-                    marque: { x: 100, y: 420 },
-                    numeroImmatriculation: { x: 150, y: 390 },
-                    degatsApparents: { x: 200, y: 360 },
-                    observations: { x: 250, y: 330 },
-                    sensSuiviVenants: { x: 300, y: 300 },
-                    sensSuiviAllants: { x: 350, y: 270 },
-                    pointDeChocInitial: { x: 400, y: 240 },
+                    nom: { x: 400, y: 598 },
+                    marque: { x: 450, y: 349 },
+                    numeroImmatriculation: { x: 470, y: 332 },
+                    degatsApparents: { x: 440, y: 130 },
+                    observations: { x: 315, y: 100 },
+                    sensSuiviVenants: { x: 425, y: 300 },
+                    sensSuiviAllants: { x: 415, y: 284 },
+                    pointDeChocInitial: { x: 10, y: 10 },
                     photos: { x: 450, y: 210 },
                     assurance: {
-                        nom: { x: 500, y: 180 },
-                        numeroAssurance: { x: 550, y: 150 },
-                        localisation: { x: 600, y: 120 },
-                        dateValiditeDebut: { x: 650, y: 90 },
-                        dateValiditeFin: { x: 650, y: 70 },
+                        nom: { x: 462, y: 632 },
+                        numeroAssurance: { x: 468, y: 615 },
+                        localisation: { x: 415, y: 598 },
+                        date_validiteDebut: { x: 420, y: 565 },
+                        date_validiteFin: { x: 490, y: 565 },
                     },
                     conducteur: {
-                        nom: { x: 700, y: 60 },
-                        prenom: { x: 750, y: 30 },
-                        adresse: { x: 800, y: 0 },
-                        numeroPermis: { x: 850, y: -30 },
-                        dateDelivration: { x: 900, y: -60 },
+                        nom: { x: 405, y: 537 },
+                        prenom: { x: 418, y: 520 },
+                        adresse: { x: 418, y: 503 },
+                        numeroPermis: { x: 480, y: 487 },
+                        dateDelivration: { x: 440, y: 470 },
+                    },
+                    assure: {
+                        nom: { x: 405, y: 433 },
+                        prenom: { x: 416, y: 416 },
+                        adresse: { x: 420, y: 400 },
+                        tel: { x: 510, y: 383 },
                     },
                     circonstances: { x: 950, y: -90 }
                 }
@@ -132,19 +133,13 @@ async function fillPDF(templatePath, outputPath, formData) {
         });
 
         
-        // Determine position for degat_materiel based on value
+        // Determine position for degats_materiels based on value
         const degats_materiels = formData.degats_materiels ? positions.degats_materiels.yes : positions.degats_materiels.no;
         firstPage.drawText('x', {
             x: degats_materiels.x,
             y: degats_materiels.y,
             ...textStyle
         });
-
-        // firstPage.drawText(formData.degats_materiels ? 'Oui' : 'Non', {
-        //     x: positions.degatsMateriels.x,
-        //     y: positions.degatsMateriels.y,
-        //     ...textStyle
-        // });
 
         // Draw temoins
         formData.temoins.forEach((temoin, index) => {
@@ -157,7 +152,7 @@ async function fillPDF(templatePath, outputPath, formData) {
         });
 
         // Draw vehicles
-        formData.vehicles.forEach((vehicle) => {
+        formData.vehicles.forEach(async (vehicle) => {
             const vehiclePositions = positions.vehicles[vehicle.nom];
             if (vehiclePositions) {
                 firstPage.drawText(vehicle.nom, {
@@ -201,116 +196,185 @@ async function fillPDF(templatePath, outputPath, formData) {
                     ...textStyle
                 });
 
-                // Draw initial impact image
-                if (vehicle.point_de_choc_initial.image) {
-                    const { x, y, width, height } = vehicle.point_de_choc_initial.image; // Ensure image data includes dimensions
+                // Load and draw initial impact image
+                const initialImpactImagePath = path.join(__dirname, '../', vehicle.point_de_choc_initial.url); // Update with dynamic path
+                if (fs.existsSync(initialImpactImagePath)) {
+                    const initialImpactImageBytes = fs.readFileSync(initialImpactImagePath);
+                    const initialImpactImage = await pdfDoc.embedPng(initialImpactImageBytes); // Or embedJpg if your image is a JPEG
+                    const { x, y } = vehiclePositions.pointDeChocInitial;
                     firstPage.drawImage(initialImpactImage, {
-                        x: x || vehiclePositions.pointDeChocInitial.x,
-                        y: y || vehiclePositions.pointDeChocInitial.y,
-                        width: width || 100, // Default width if not provided
-                        height: height || 100 // Default height if not provided
+                        x: x + 20, // Position adjustment for image
+                        y: y - 60, // Position adjustment for image
+                        width: 50,
+                        height: 50,
                     });
+                } else {
+                    console.error(`Image not found at: ${initialImpactImagePath}`);
                 }
 
                 // Draw photos
-                vehicle.photos.forEach((photo, index) => {
-                    const photoYPosition = vehiclePositions.photos.y - (index * 15);
-                    firstPage.drawText(photo.description, {
-                        x: vehiclePositions.photos.x,
-                        y: photoYPosition,
+                const photoPositions = vehiclePositions.photos;
+                let photoIndex = 0;
+
+                // Function to draw a photo
+                const drawPhoto = async (photoUrl, photoX, photoY) => {
+                    if (photoUrl) {
+                        const photoPath = path.join(__dirname, '../', photoUrl);
+                        if (fs.existsSync(photoPath)) {
+                            const photoBytes = fs.readFileSync(photoPath);
+                            const photoImage = await pdfDoc.embedPng(photoBytes); // Or embedJpg if your image is a JPEG
+                            firstPage.drawImage(photoImage, {
+                                x: photoX,
+                                y: photoY,
+                                width: 50,
+                                height: 50,
+                            });
+                        } else {
+                            console.error(`Image not found at: ${photoPath}`);
+                        }
+                    }
+                };
+
+                // Draw individual photos with adjustments for each vehicle
+                if (vehicle.photos.carte_grise_avant) {
+                    await drawPhoto(vehicle.photos.carte_grise_avant, photoPositions.x + (photoIndex * 55), photoPositions.y);
+                    photoIndex++;
+                }
+                if (vehicle.photos.carte_grise_arriere) {
+                    await drawPhoto(vehicle.photos.carte_grise_arriere, photoPositions.x + (photoIndex * 55), photoPositions.y);
+                    photoIndex++;
+                }
+                if (vehicle.photos.permis_conduire_avant) {
+                    await drawPhoto(vehicle.photos.permis_conduire_avant, photoPositions.x + (photoIndex * 55), photoPositions.y);
+                    photoIndex++;
+                }
+                if (vehicle.photos.permis_conduire_arriere) {
+                    await drawPhoto(vehicle.photos.permis_conduire_arriere, photoPositions.x + (photoIndex * 55), photoPositions.y);
+                    photoIndex++;
+                }
+                if (vehicle.photos.attestation_assurance) {
+                    await drawPhoto(vehicle.photos.attestation_assurance, photoPositions.x + (photoIndex * 55), photoPositions.y);
+                    photoIndex++;
+                }
+                if (vehicle.photos.multiple_photos) {
+                    for (const photoUrl of vehicle.photos.multiple_photos) {
+                        await drawPhoto(photoUrl, photoPositions.x + (photoIndex * 55), photoPositions.y);
+                        photoIndex++;
+                    }
+                }
+
+                // Draw circumstances
+                const circumstancesX = vehiclePositions.circonstances.x;
+                let circumstancesY = vehiclePositions.circonstances.y;
+                const lineHeight = 10;
+
+                for (const circumstance of vehicle.circonstances) {
+                    firstPage.drawText(circumstance, {
+                        x: circumstancesX,
+                        y: circumstancesY,
                         ...textStyle
                     });
-                });
+                    circumstancesY -= lineHeight;
+                }
 
+                // Draw Assurance
                 firstPage.drawText(vehicle.assurance.nom, {
                     x: vehiclePositions.assurance.nom.x,
                     y: vehiclePositions.assurance.nom.y,
                     ...textStyle
                 });
+
                 firstPage.drawText(vehicle.assurance.numero_assurance, {
                     x: vehiclePositions.assurance.numeroAssurance.x,
                     y: vehiclePositions.assurance.numeroAssurance.y,
                     ...textStyle
                 });
+
                 firstPage.drawText(vehicle.assurance.localisation, {
                     x: vehiclePositions.assurance.localisation.x,
                     y: vehiclePositions.assurance.localisation.y,
                     ...textStyle
                 });
+
                 firstPage.drawText(vehicle.assurance.date_validiteDebut, {
-                    x: vehiclePositions.assurance.dateValiditeDebut.x,
-                    y: vehiclePositions.assurance.dateValiditeDebut.y,
-                    ...textStyle
-                });
-                firstPage.drawText(vehicle.assurance.date_validiteFin, {
-                    x: vehiclePositions.assurance.dateValiditeFin.x,
-                    y: vehiclePositions.assurance.dateValiditeFin.y,
+                    x: vehiclePositions.assurance.date_validiteDebut.x,
+                    y: vehiclePositions.assurance.date_validiteDebut.y,
                     ...textStyle
                 });
 
+                firstPage.drawText(vehicle.assurance.date_validiteFin, {
+                    x: vehiclePositions.assurance.date_validiteFin.x,
+                    y: vehiclePositions.assurance.date_validiteFin.y,
+                    ...textStyle
+                });
+
+                // Draw Conducteur
                 firstPage.drawText(vehicle.conducteur.nom, {
                     x: vehiclePositions.conducteur.nom.x,
                     y: vehiclePositions.conducteur.nom.y,
                     ...textStyle
                 });
+
                 firstPage.drawText(vehicle.conducteur.prenom, {
                     x: vehiclePositions.conducteur.prenom.x,
                     y: vehiclePositions.conducteur.prenom.y,
                     ...textStyle
                 });
+
                 firstPage.drawText(vehicle.conducteur.adresse, {
                     x: vehiclePositions.conducteur.adresse.x,
                     y: vehiclePositions.conducteur.adresse.y,
                     ...textStyle
                 });
-                firstPage.drawText(vehicle.assure.nom, {
-                    x: vehiclePositions.assure.nom.x,
-                    y: vehiclePositions.assure.nom.y,
-                    ...textStyle
-                });
-                firstPage.drawText(vehicle.assure.prenom, {
-                    x: vehiclePositions.assure.prenom.x,
-                    y: vehiclePositions.assure.prenom.y,
-                    ...textStyle
-                });
-                firstPage.drawText(vehicle.assure.adresse, {
-                    x: vehiclePositions.assure.adresse.x,
-                    y: vehiclePositions.assure.adresse.y,
-                    ...textStyle
-                });
-                firstPage.drawText(vehicle.assure.tel, {
-                    x: vehiclePositions.assure.tel.x,
-                    y: vehiclePositions.assure.tel.y,
-                    ...textStyle
-                });
+
                 firstPage.drawText(vehicle.conducteur.numero_permis, {
                     x: vehiclePositions.conducteur.numeroPermis.x,
                     y: vehiclePositions.conducteur.numeroPermis.y,
                     ...textStyle
                 });
+
                 firstPage.drawText(vehicle.conducteur.date_delivration, {
                     x: vehiclePositions.conducteur.dateDelivration.x,
                     y: vehiclePositions.conducteur.dateDelivration.y,
                     ...textStyle
                 });
 
-                vehicle.circonstances.forEach((circonstance, index) => {
-                    const circonstanceYPosition = vehiclePositions.circonstances.y - (index * 15);
-                    firstPage.drawText(circonstance, {
-                        x: vehiclePositions.circonstances.x,
-                        y: circonstanceYPosition,
-                        ...textStyle
-                    });
+                // Draw Assure
+                firstPage.drawText(vehicle.assure.nom, {
+                    x: vehiclePositions.assure.nom.x,
+                    y: vehiclePositions.assure.nom.y,
+                    ...textStyle
+                });
+
+                firstPage.drawText(vehicle.assure.prenom, {
+                    x: vehiclePositions.assure.prenom.x,
+                    y: vehiclePositions.assure.prenom.y,
+                    ...textStyle
+                });
+
+                firstPage.drawText(vehicle.assure.adresse, {
+                    x: vehiclePositions.assure.adresse.x,
+                    y: vehiclePositions.assure.adresse.y,
+                    ...textStyle
+                });
+
+                firstPage.drawText(vehicle.assure.tel, {
+                    x: vehiclePositions.assure.tel.x,
+                    y: vehiclePositions.assure.tel.y,
+                    ...textStyle
                 });
             }
         });
 
+        // Save the filled PDF
         const pdfBytes = await pdfDoc.save();
         fs.writeFileSync(outputPath, pdfBytes);
+
+        console.log('PDF filled and saved successfully!');
     } catch (error) {
-        console.error(`Error filling PDF: ${error.message}`);
-        throw error;
+        console.error('Error filling the PDF:', error);
     }
 }
 
-module.exports = { fillPDF };
+module.exports ={fillPDF}
+
