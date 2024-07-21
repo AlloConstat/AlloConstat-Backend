@@ -34,14 +34,14 @@ async function fillPDF(templatePath, outputPath, formData) {
             temoins: { x: 180, y: 685 },
             vehicles: {
                 A: {
-                    nom: { x: 50, y: 600 },
+                   // nom: { x: 50, y: 600 },
                     marque: { x: 91, y: 349 },
                     numeroImmatriculation: { x: 120, y: 332 },
                     degatsApparents: { x: 40, y: 130 },
                     observations: { x: 40, y: 100 },
                     sensSuiviVenants: { x: 72, y: 300 },
                     sensSuiviAllants: { x: 65, y: 284 },
-                    pointDeChocInitial: { x: 50, y: 50 },
+                    pointDeChocInitial: { x: 28, y: 216 },
                     photos: { x: 450, y: 360 },
                     assurance: {
                         nom: { x: 110, y: 632 },
@@ -63,17 +63,18 @@ async function fillPDF(templatePath, outputPath, formData) {
                         adresse: { x: 70, y: 400 },
                         tel: { x: 160, y: 383 },
                     },
-                    circonstances: { x: 950, y: 60 }
+                    circonstances: { x: 218, y: 620 },
+                    nbr_de_choix: {x: 216, y: 273 }
                 },
                 B: {
-                    nom: { x: 400, y: 598 },
+                   // nom: { x: 400, y: 598 },
                     marque: { x: 450, y: 349 },
                     numeroImmatriculation: { x: 470, y: 332 },
                     degatsApparents: { x: 440, y: 130 },
                     observations: { x: 315, y: 100 },
                     sensSuiviVenants: { x: 425, y: 300 },
                     sensSuiviAllants: { x: 415, y: 284 },
-                    pointDeChocInitial: { x: 10, y: 10 },
+                    pointDeChocInitial: { x: 433, y: 220 },
                     photos: { x: 450, y: 210 },
                     assurance: {
                         nom: { x: 462, y: 632 },
@@ -95,7 +96,8 @@ async function fillPDF(templatePath, outputPath, formData) {
                         adresse: { x: 420, y: 400 },
                         tel: { x: 510, y: 383 },
                     },
-                    circonstances: { x: 950, y: -90 }
+                    circonstances: { x: 372, y: 620 },
+                    nbr_de_choix: {x: 370, y: 273 }
                 }
             }
         };
@@ -155,11 +157,11 @@ async function fillPDF(templatePath, outputPath, formData) {
         formData.vehicles.forEach(async (vehicle) => {
             const vehiclePositions = positions.vehicles[vehicle.nom];
             if (vehiclePositions) {
-                firstPage.drawText(vehicle.nom, {
-                    x: vehiclePositions.nom.x,
-                    y: vehiclePositions.nom.y,
-                    ...textStyle
-                });
+                // firstPage.drawText(vehicle.nom, {
+                //     x: vehiclePositions.nom.x,
+                //     y: vehiclePositions.nom.y,
+                //     ...textStyle
+                // });
                 firstPage.drawText(vehicle.marque, {
                     x: vehiclePositions.marque.x,
                     y: vehiclePositions.marque.y,
@@ -190,11 +192,11 @@ async function fillPDF(templatePath, outputPath, formData) {
                     y: vehiclePositions.sensSuiviAllants.y,
                     ...textStyle
                 });
-                firstPage.drawText(vehicle.point_de_choc_initial.description, {
-                    x: vehiclePositions.pointDeChocInitial.x,
-                    y: vehiclePositions.pointDeChocInitial.y,
-                    ...textStyle
-                });
+                // firstPage.drawText(vehicle.point_de_choc_initial.description, {
+                //     x: vehiclePositions.pointDeChocInitial.x,
+                //     y: vehiclePositions.pointDeChocInitial.y,
+                //     ...textStyle
+                // });
 
                 // Load and draw initial impact image
                 const initialImpactImagePath = path.join(__dirname, '../', vehicle.point_de_choc_initial.url); // Update with dynamic path
@@ -205,8 +207,8 @@ async function fillPDF(templatePath, outputPath, formData) {
                     firstPage.drawImage(initialImpactImage, {
                         x: x + 20, // Position adjustment for image
                         y: y - 60, // Position adjustment for image
-                        width: 50,
-                        height: 50,
+                        width: 102,
+                        height: 80,
                     });
                 } else {
                     console.error(`Image not found at: ${initialImpactImagePath}`);
@@ -263,19 +265,26 @@ async function fillPDF(templatePath, outputPath, formData) {
                     }
                 }
 
-                // Draw circumstances
+                const totalCircumstances = 17;
                 const circumstancesX = vehiclePositions.circonstances.x;
-                let circumstancesY = vehiclePositions.circonstances.y;
-                const lineHeight = 10;
-
-                for (const circumstance of vehicle.circonstances) {
-                    firstPage.drawText(circumstance, {
+                const baseCircumstancesY = vehiclePositions.circonstances.y;
+                const lineHeight = 20;
+                const newLineHeight = 20.3;
+                
+                for (let i = 1; i <= totalCircumstances; i++) {
+                    // Détermine le lineHeight à utiliser
+                    const currentLineHeight = i >= 9 ? newLineHeight : lineHeight;
+                    const yPosition = baseCircumstancesY - ((i - 1) * currentLineHeight);
+                    const isCircumstancePresent = vehicle.circonstances.includes(i.toString());
+                    const text = isCircumstancePresent ? 'x' : '';
+                
+                    firstPage.drawText(text, {
                         x: circumstancesX,
-                        y: circumstancesY,
+                        y: yPosition,
                         ...textStyle
                     });
-                    circumstancesY -= lineHeight;
                 }
+                
 
                 // Draw Assurance
                 firstPage.drawText(vehicle.assurance.nom, {
@@ -355,6 +364,12 @@ async function fillPDF(templatePath, outputPath, formData) {
                 firstPage.drawText(vehicle.assure.adresse, {
                     x: vehiclePositions.assure.adresse.x,
                     y: vehiclePositions.assure.adresse.y,
+                    ...textStyle
+                });
+
+                firstPage.drawText(vehicle.nbr_de_choix, {
+                    x: vehiclePositions.nbr_de_choix.x,
+                    y: vehiclePositions.nbr_de_choix.y,
                     ...textStyle
                 });
 
