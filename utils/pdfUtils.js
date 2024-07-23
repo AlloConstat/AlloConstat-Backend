@@ -391,5 +391,36 @@ async function fillPDF(templatePath, outputPath, formData) {
     }
 }
 
-module.exports ={fillPDF}
+
+async function addDuplicataImage(inputPath, outputPath) {
+    try {
+        const existingPdfBytes = fs.readFileSync(inputPath);
+        const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+        const duplicataImagePath = path.join(__dirname, '../utils/duplicata.png');
+        const duplicataImageBytes = fs.readFileSync(duplicataImagePath);
+        const duplicataImage = await pdfDoc.embedPng(duplicataImageBytes);
+
+        const pages = pdfDoc.getPages();
+
+        pages.forEach((page) => {
+            page.drawImage(duplicataImage, {
+                x: page.getWidth() - duplicataImage.width +40,
+                y: 400,
+                width: duplicataImage.width,
+                height: duplicataImage.height,
+            });
+        });
+
+        const pdfBytes = await pdfDoc.save();
+        fs.writeFileSync(outputPath, pdfBytes);
+
+        console.log('Duplicata PDF filled and saved successfully!');
+    } catch (error) {
+        console.error('Error adding duplicata image to PDF:', error);
+    }
+}
+
+module.exports = { fillPDF, addDuplicataImage };
+
 
