@@ -3,6 +3,7 @@ const fs = require('fs');
 const { fillPDF, addDuplicataImage } = require('../utils/pdfUtils'); // Correct import
 const Constat = require('../models/constatModel');
 const ResponseModels = require('../models/responseModels');
+const { uploadFile } = require('../utils/googleDrive');
 
 exports.createConstat = async (req, res) => {
     try {
@@ -33,6 +34,19 @@ exports.createConstat = async (req, res) => {
         } else {
             console.log(`Duplicata PDF creation failed.`);
         }
+
+        // Upload files to Google Drive
+        const simplePdfUrl = await uploadFile(outputPathSimple, `constat_${newConstat._id}.pdf`);
+        const duplicataPdfUrl = await uploadFile(outputPathDuplicata, `constat_${newConstat._id}_duplicata.pdf`);
+
+        // Save URLs and timestamp in the database
+        newConstat.pdfUrls = {
+            simple: simplePdfUrl,
+            duplicata: duplicataPdfUrl,
+        };
+        newConstat.createdAt = new Date();
+        newConstat.timestamp = Date.now();
+        await newConstat.save();
 
         res.status(ResponseModels.CREATED.status).send({ ...ResponseModels.CREATED, data: newConstat });
     } catch (error) {

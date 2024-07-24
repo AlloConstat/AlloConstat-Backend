@@ -25,6 +25,11 @@ app.use('/api/vehicules', vehiculeRoutes);
 app.use('/api/pdf', pdfRoutes);
 
 
+app.get('/oauth2callback', (req, res) => {
+    // Cette partie peut être configurée selon vos besoins
+    res.send('Authentication successful! You can close this tab.');
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
