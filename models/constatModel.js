@@ -45,7 +45,7 @@ const constatSchema = new mongoose.Schema({
     date_accident: { type: Date, required: true },
     lieu: { type: String, required: true },
     blesses: { type: Boolean, required: true },
-    degats_materiels: { type: Boolean, required: true },
+    degats_materiels: { type: Boolean},
     temoins: [temoinsSchema],
     vehicles: [vehicleSchema],
 });
