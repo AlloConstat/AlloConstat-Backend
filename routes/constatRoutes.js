@@ -3,10 +3,18 @@ const router = express.Router();
 const constatController = require('../controllers/constatController');
 const { verifyToken } = require('../middleware/authMiddleware');
 
-router.post('/',verifyToken, constatController.createConstat);
-router.get('/', verifyToken,constatController.getAllConstats);
-router.get('/:id',verifyToken, constatController.getConstatById);
-router.put('/:id',verifyToken,  constatController.updateConstat);
-router.delete('/:id',verifyToken,  constatController.deleteConstat);
+// Route pour  les constats de bateaux
+router.get('/boats', constatController.getBoatConstats);
+router.get('/boats/:id', constatController.getBoatConstatById);
+router.put('/boats/:id', constatController.updateBoatConstatById);
+router.delete('/boats/:id', constatController.deleteBoatConstatByID);
+
+
+// Route pour les constats de voitures
+router.get('/cars', constatController.getCarConstats);
+router.get('/cars/:id', constatController.getCarConstatById);
+router.put('/cars/:id', constatController.updateCarConstatById);
+router.delete('/cars/:id', constatController.deleteCarConstatByID);
+
 
 module.exports = router;
