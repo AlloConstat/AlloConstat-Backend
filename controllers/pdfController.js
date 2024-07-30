@@ -64,22 +64,3 @@ console.log('\n',newConstat)
         res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send({ ...ResponseModels.INTERNAL_SERVER_ERROR, message: error.message });
     }
 };
-
-
-exports.getBoatConstats = async (req, res) => {
-    try {
-      const boatConstats = await ConstatBateau.find({ vehicleType: 'boat' }); // Exemple de filtre par type
-      res.status(200).json(boatConstats);
-    } catch (error) {
-      res.status(500).json({ error: 'Erreur lors de la récupération des constats de bateaux' });
-    }
-  };
-  
-  exports.getCarConstats = async (req, res) => {
-    try {
-      const carConstats = await Constat.find({ vehicleType: 'car' }); // Exemple de filtre par type
-      res.status(200).json(carConstats);
-    } catch (error) {
-      res.status(500).json({ error: 'Erreur lors de la récupération des constats de voitures' });
-    }
-  };
