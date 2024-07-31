@@ -7,7 +7,7 @@ require('dotenv').config();
 require('./config/db'); // Assurez-vous de configurer mongoose
 require('./config/passport'); // Assurez-vous de configurer passport
 
-//const authRoutes = require('./routes/authRoutes.js');
+const authRoutes = require('./routes/authRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 const constatRoutes = require('./routes/constatRoutes.js');
 const vehiculeRoutes = require('./routes/vehiculeRoutes.js');
@@ -18,17 +18,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
-//app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/constats', constatRoutes);
 app.use('/api/vehicules', vehiculeRoutes);
 app.use('/api/pdf', pdfRoutes);
 
 
-app.get('/oauth2callback', (req, res) => {
-    // Cette partie peut être configurée selon vos besoins
-    res.send('Authentication successful! You can close this tab.');
-});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

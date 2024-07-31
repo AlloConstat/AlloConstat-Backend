@@ -2,9 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const ResponseModels = require('../models/responseModels');
 require('dotenv').config();
-
 const passport = require('passport');
-
 
 exports.register = async (req, res) => {
     const { nom, prenom, email, mot_de_passe, telephone, region, role } = req.body;
@@ -48,12 +46,11 @@ exports.login = async (req, res) => {
     }
 };
 
-
 // Authentification avec Google OAuth
 exports.googleAuth = passport.authenticate('google', { scope: ['profile', 'email'] });
 
 // Callback de Google OAuth
-exports.googleAuthCallback = (req, res) => {
+exports.googleAuthCallback = (req, res, next) => {
     passport.authenticate('google', { failureRedirect: '/login' }, (err, user) => {
         if (err) {
             return res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
@@ -68,6 +65,6 @@ exports.googleAuthCallback = (req, res) => {
         });
 
         // Redirection ou réponse après authentification réussie
-        res.redirect('/'); // Remplacez par l'URL souhaitée après l'authentification réussie
-    })(req, res);
+        res.redirect(`/profile?token=${token}`); // Remplacez par l'URL souhaitée après l'authentification réussie
+    })(req, res, next);
 };

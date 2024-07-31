@@ -4,9 +4,9 @@ const User = require('../models/userModel');
 require('dotenv').config();
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/api/auth/auth/google/callback"
+    clientID: "37836443720-il4mn9kd2b404oldhogmlluq05ja97u4.apps.googleusercontent.com",
+    clientSecret: "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",
+    callbackURL: "http://localhost:3000/api/auth/google/callback"
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
