@@ -37,8 +37,8 @@ async function fillPDF(templatePath, outputPath, formData) {
                    // nom: { x: 50, y: 600 },
                     marque: { x: 91, y: 349 },
                     numeroImmatriculation: { x: 120, y: 332 },
-                    degatsApparents: { x: 40, y: 130 },
-                    observations: { x: 40, y: 100 },
+                    degatsApparents: { x: 30, y: 134 },
+                    observations: { x: 30, y: 100 },
                     sensSuiviVenants: { x: 72, y: 300 },
                     sensSuiviAllants: { x: 65, y: 284 },
                     pointDeChocInitial: { x: 28, y: 216 },
@@ -71,7 +71,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                     marque: { x: 450, y: 349 },
                     numeroImmatriculation: { x: 470, y: 332 },
                     degatsApparents: { x: 440, y: 130 },
-                    observations: { x: 315, y: 100 },
+                    observations: { x: 310, y: 100 },
                     sensSuiviVenants: { x: 425, y: 300 },
                     sensSuiviAllants: { x: 415, y: 284 },
                     pointDeChocInitial: { x: 433, y: 220 },
@@ -172,16 +172,41 @@ async function fillPDF(templatePath, outputPath, formData) {
                     y: vehiclePositions.numeroImmatriculation.y,
                     ...textStyle
                 });
-                firstPage.drawText(vehicle.degats_apparents, {
-                    x: vehiclePositions.degatsApparents.x,
-                    y: vehiclePositions.degatsApparents.y,
-                    ...textStyle
-                });
-                firstPage.drawText(vehicle.observations, {
-                    x: vehiclePositions.observations.x,
-                    y: vehiclePositions.observations.y,
-                    ...textStyle
-                });
+                // firstPage.drawText(vehicle.degats_apparents, {
+                //     x: vehiclePositions.degatsApparents.x,
+                //     y: vehiclePositions.degatsApparents.y,
+                //     ...textStyle
+                // });
+
+                   // Split degatsApparents into two lines
+                   const degatsApparentsLines = splitTextIntoLines(vehicle.degats_apparents, 30);
+                   const lineHeights = 7; // Adjust as needed for spacing
+   
+                   degatsApparentsLines.forEach((line, index) => {
+                       firstPage.drawText(line, {
+                           x: vehiclePositions.degatsApparents.x,
+                           y: vehiclePositions.degatsApparents.y - (index * lineHeights),
+                           ...textStyle
+                       });
+                   });
+
+                   const observationsLines = splitTextIntoLines(vehicle.observations, 60);
+                   const lineHeightss = 7; // Adjust as needed for spacing
+   
+                   observationsLines.forEach((line, index) => {
+                       firstPage.drawText(line, {
+                           x: vehiclePositions.observations.x,
+                           y: vehiclePositions.observations.y - (index * lineHeights),
+                           ...textStyle
+                       });
+                   });
+              
+
+                // firstPage.drawText(vehicle.observations, {
+                //     x: vehiclePositions.observations.x,
+                //     y: vehiclePositions.observations.y,
+                //     ...textStyle
+                // });
                 firstPage.drawText(vehicle.sens_suivi_venant, {
                     x: vehiclePositions.sensSuiviVenants.x,
                     y: vehiclePositions.sensSuiviVenants.y,
@@ -419,6 +444,27 @@ async function addDuplicataImage(inputPath, outputPath) {
     } catch (error) {
         console.error('Error adding duplicata image to PDF:', error);
     }
+}
+
+function splitTextIntoLines(text, maxLength) {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = '';
+
+    words.forEach(word => {
+        if ((currentLine + word).length <= maxLength) {
+            currentLine += `${word} `;
+        } else {
+            lines.push(currentLine.trim());
+            currentLine = `${word} `;
+        }
+    });
+
+    if (currentLine) {
+        lines.push(currentLine.trim());
+    }
+
+    return lines;
 }
 
 module.exports = { fillPDF, addDuplicataImage };
