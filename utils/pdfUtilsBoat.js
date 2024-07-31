@@ -55,17 +55,17 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                     },
                     pilote: {
                         nom: { x: 90, y: 342 },
-                        prenom: { x: 85, y: 330 },
-                        adresse: { x: 85, y: 320 },
-                        categorie: { x: 130, y: 487 },
-                        par: { x: 80, y: 470 },
+                        prenom: { x: 85, y: 329 },
+                        adresse: { x: 40, y: 305 },
+                        categorie: { x: 190, y: 277 },
+                        par: { x: 95, y: 265 },
                         numero_permis: { x: 80, y: 470 },
-                        date_delivration: { x: 80, y: 470 },
+                        date_delivration: { x: 150, y: 265 },
                     },
                     assure: {
                         nom: { x: 90, y: 634 },
                         prenom: { x: 78, y: 621 },
-                        adresse: { x: 78, y: 608 },
+                        adresse: { x: 40, y: 595 },
                     },
                     circonstances: { x: 218, y: 620 },
                     nbr_de_choix: {x: 216, y: 273 }
@@ -89,16 +89,16 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                     pilote: {
                         nom: { x: 438, y: 342 },
                         prenom: { x: 430, y: 330 },
-                        adresse: { x: 64, y: 320 },
-                        categorie: { x: 130, y: 487 },
-                        par: { x: 80, y: 470 },
+                        adresse: { x: 390, y: 308 },
+                        categorie: { x: 540, y: 282 },
+                        par: { x: 445, y: 268 },
                         numero_permis: { x: 80, y: 470 },
-                        date_delivration: { x: 80, y: 470 },
+                        date_delivration: { x: 525, y: 268 },
                     },
                     assure: {
                         nom: { x: 442, y: 634 },
                         prenom: { x: 430, y: 621 },
-                        adresse: { x: 430, y: 608 },
+                        adresse: { x: 390, y: 595 },
                         
                     },
                     circonstances: { x: 372, y: 620 },
@@ -110,7 +110,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
         const textStyle = {
             size: 9, // Smaller font size
             font: customFont, // Use custom font
-            color: rgb(0, 0, 1), // Blue color
+            color: rgb(0, 0, 0), // Blue color
         };
 
  
@@ -332,11 +332,22 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                     y: bateauPositions.pilote.prenom.y,
                     ...textStyle
                 });
-                firstPage.drawText(bateau.pilote.adresse, {
-                    x: bateauPositions.pilote.adresse.x,
-                    y: bateauPositions.pilote.adresse.y,
-                    ...textStyle
+
+                const piloteLines = splitTextIntoLines(bateau.assure.adresse, 35);
+                //const lineHeightss = 14; // Adjust as needed for spacing
+
+               piloteLines.forEach((line, index) => {
+                    firstPage.drawText(line, {
+                        x: bateauPositions.pilote.adresse.x,
+                        y: bateauPositions.pilote.adresse.y - (index * 14),
+                        ...textStyle
+                    });
                 });
+                // firstPage.drawText(bateau.pilote.adresse, {
+                //     x: bateauPositions.pilote.adresse.x,
+                //     y: bateauPositions.pilote.adresse.y,
+                //     ...textStyle
+                // });
                 firstPage.drawText(bateau.pilote.categorie, {
                     x: bateauPositions.pilote.categorie.x,
                     y: bateauPositions.pilote.categorie.y,
@@ -373,11 +384,23 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                     y: bateauPositions.assure.prenom.y,
                     ...textStyle
                 });
-                firstPage.drawText(bateau.assure.adresse, {
-                    x: bateauPositions.assure.adresse.x,
-                    y: bateauPositions.assure.adresse.y,
-                    ...textStyle
+
+                const adresseLines = splitTextIntoLines(bateau.assure.adresse, 35);
+                const lineHeights = 14; // Adjust as needed for spacing
+
+                adresseLines.forEach((line, index) => {
+                    firstPage.drawText(line, {
+                        x: bateauPositions.assure.adresse.x,
+                        y: bateauPositions.assure.adresse.y - (index * lineHeights),
+                        ...textStyle
+                    });
                 });
+
+                // firstPage.drawText(bateau.assure.adresse, {
+                //     x: bateauPositions.assure.adresse.x,
+                //     y: bateauPositions.assure.adresse.y,
+                //     ...textStyle
+                // });
 
             }
         });
@@ -390,5 +413,25 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
     }
 }
 
+function splitTextIntoLines(text, maxLength) {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = '';
+
+    words.forEach(word => {
+        if ((currentLine + word).length <= maxLength) {
+            currentLine += `${word} `;
+        } else {
+            lines.push(currentLine.trim());
+            currentLine = `${word} `;
+        }
+    });
+
+    if (currentLine) {
+        lines.push(currentLine.trim());
+    }
+
+    return lines;
+}
 // Example usage
 module.exports = { fillPDFBoat };
