@@ -34,9 +34,9 @@ exports.createConstat = async (req, res) => {
 
             return res.status(ResponseModels.BAD_REQUEST.status).send({ ...ResponseModels.BAD_REQUEST, message: 'Invalid vehicle type' });
         }
-console.log('\n new constat',newConstat)
-        await newConstat.save();
 
+        
+        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         let templatePath;
         let outputPathSimple;
         let outputPathDuplicata;
@@ -52,9 +52,9 @@ console.log('\n new constat',newConstat)
             outputPathDuplicata = path.join(__dirname, `../output/bateaux/constat_bateau_${newConstat._id}_duplicata.pdf`);
             await fillPDFBoat(templatePath, outputPathSimple, constatData);
         }
-        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        
         //await addDuplicataImage(outputPathSimple, outputPathDuplicata);
-        await wait(13000);
+        //await wait(13000);
         newConstat.pdfUrls = {
             simple: outputPathSimple,
             duplicata: outputPathDuplicata,

@@ -158,44 +158,89 @@ async function fillPDF(templatePath, outputPath, formData) {
         });*/
 
 
-        const drawsPhotos = async (photo, posX, posY) => {
+        // const drawsPhotos = async (photo, posX, posY) => {
+        //     try {
+        //         // Remove the base64 data URL prefix
+        //         const base64Data = photo.split(',')[1]; // Assumes the format is "data:image/png;base64,<base64_data>"
+        
+        //         const photoBytes = Buffer.from(base64Data, 'base64');
+        
+        //         // Embed the PNG image
+        //         const embeddedPhoto = await pdfDoc.embedPng(photoBytes);
+        
+        //         // Draw image on the second page
+        //         secondPage.drawImage(embeddedPhoto, {
+        //             x: posX,
+        //             y: posY,
+        //             width: 100,
+        //             height: 100,
+        //         });
+        
+        //         console.log('Photo added successfully.');
+        //     } catch (error) {
+        //         console.error('Error drawing photos:', error);
+        //     }
+        // };
+
+        const drawPhotoWithTitle = async (photo, posX, posY, page) => {
             try {
-                // Remove the base64 data URL prefix
-                const base64Data = photo.split(',')[1]; // Assumes the format is "data:image/png;base64,<base64_data>"
-        
+                const base64Data = photo.split(',')[1];
                 const photoBytes = Buffer.from(base64Data, 'base64');
-        
-                // Embed the PNG image
                 const embeddedPhoto = await pdfDoc.embedPng(photoBytes);
-        
-                // Draw image on the second page
-                secondPage.drawImage(embeddedPhoto, {
+
+                page.drawImage(embeddedPhoto, {
                     x: posX,
-                    y: posY,
-                    width: 100,
-                    height: 100,
+                    y: posY -250,
+                    width: 200,
+                    height: 200,
                 });
-        
+
+                page.drawText('Tester les images', {
+                    x: posX,
+                    y: posY -220,
+                    ...textStyle,
+                    size: 12,
+                    color: rgb(1, 0, 0), // Red color for the title
+                });
+
                 console.log('Photo added successfully.');
             } catch (error) {
                 console.error('Error drawing photos:', error);
             }
         };
         const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        const addPhotos = async (vehicle, vehiclePositions) => {
+        const addPhotos = async (vehicle) => {
+            let pageIndex = 2;
             let posX = 80;
-            let posY = 80;
-        
+            let posY = 800;
+            let imageCount = 0;
+            let page = pages.length > pageIndex ? pages[pageIndex] : pdfDoc.addPage();
+            pageIndex+=1;
             for (const photo of vehicle.photos) {
                 for (const image of photo.images) {
-                    await drawsPhotos(image, posX, posY);
-                    posX += 80;
-                    posY += 80;
-                  
+                    if (imageCount === 4) {
+                        page = pages.length > pageIndex ? pages[pageIndex] : pdfDoc.addPage();
+                        posX = 80;
+                        posY = 800; 
+                        imageCount = 0;
+                       
+                    }
+
+                    
+                    await drawPhotoWithTitle(image, posX, posY, page);
+
+                    posX += 250; // Adjust spacing between images as needed
+                    imageCount++;
+
+                    if (imageCount === 2) {
+                        posX = 80;
+                        posY -= 280; // Move to the next row
+                    }
                 }
             }
             console.log('All photos processed successfully.');
         };
+
 
         // Draw vehicles
         for (const vehicle of formData.vehicles) {
@@ -208,7 +253,7 @@ async function fillPDF(templatePath, outputPath, formData) {
 
             if (vehiclePositions) {
 
-                addPhotos(vehicle, vehiclePositions).then(() => {
+                addPhotos(vehicle).then(() => {
                     console.log('Photos added for vehicle:', vehicle.nom);
                 });
 
@@ -391,7 +436,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                 });
             }
         };
-        await wait(14000);
+        await wait(5000);
 
         // Save the filled PDF
         const pdfBytes = await pdfDoc.save();
