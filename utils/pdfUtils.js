@@ -11,6 +11,8 @@ async function fillPDF(templatePath, outputPath, formData) {
         // Register fontkit
         pdfDoc.registerFontkit(fontkit);
 
+       // console.log("\nformdata",formData.vehicles)
+
         // Load custom font (Arial)
         const customFontPath = path.join(__dirname, 'Arial.ttf');
         const customFontBytes = fs.readFileSync(customFontPath);
@@ -18,6 +20,8 @@ async function fillPDF(templatePath, outputPath, formData) {
 
         const pages = pdfDoc.getPages();
         const firstPage = pages[0];
+        const secondPage = pages.length > 1 ? pages[1] : pdfDoc.addPage();
+
 
         const positions = {
             dateAccident: { x: 50, y: 720 },
@@ -41,7 +45,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                     observations: { x: 30, y: 100 },
                     sensSuiviVenants: { x: 72, y: 300 },
                     sensSuiviAllants: { x: 65, y: 284 },
-                    pointDeChocInitial: { x: 28, y: 216 },
+                    // pointDeChocInitial: { x: 28, y: 216 },
                     photos: { x: 450, y: 360 },
                     assurance: {
                         nom: { x: 110, y: 632 },
@@ -74,7 +78,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                     observations: { x: 310, y: 100 },
                     sensSuiviVenants: { x: 425, y: 300 },
                     sensSuiviAllants: { x: 415, y: 284 },
-                    pointDeChocInitial: { x: 433, y: 220 },
+                   // pointDeChocInitial: { x: 433, y: 220 },
                     photos: { x: 450, y: 210 },
                     assurance: {
                         nom: { x: 462, y: 632 },
@@ -144,39 +148,84 @@ async function fillPDF(templatePath, outputPath, formData) {
         });
 
         // Draw temoins
-        formData.temoins.forEach((temoin, index) => {
+      /*  formData.temoins.forEach((temoin, index) => {
             const temoinYPosition = positions.temoins.y - (index * 15);
             firstPage.drawText(`Nom: ${temoin.nom}, Adresse: ${temoin.adresse}, Téléphone: ${temoin.telephone}`, {
                 x: positions.temoins.x,
                 y: temoinYPosition,
                 ...textStyle
             });
-        });
+        });*/
+
+
+        const drawsPhotos = async (photo, posX, posY) => {
+            try {
+                // Remove the base64 data URL prefix
+                const base64Data = photo.split(',')[1]; // Assumes the format is "data:image/png;base64,<base64_data>"
+        
+                const photoBytes = Buffer.from(base64Data, 'base64');
+        
+                // Embed the PNG image
+                const embeddedPhoto = await pdfDoc.embedPng(photoBytes);
+        
+                // Draw image on the second page
+                secondPage.drawImage(embeddedPhoto, {
+                    x: posX,
+                    y: posY,
+                    width: 100,
+                    height: 100,
+                });
+        
+                console.log('Photo added successfully.');
+            } catch (error) {
+                console.error('Error drawing photos:', error);
+            }
+        };
+        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        const addPhotos = async (vehicle, vehiclePositions) => {
+            let posX = 80;
+            let posY = 80;
+        
+            for (const photo of vehicle.photos) {
+                for (const image of photo.images) {
+                    await drawsPhotos(image, posX, posY);
+                    posX += 80;
+                    posY += 80;
+                  
+                }
+            }
+            console.log('All photos processed successfully.');
+        };
 
         // Draw vehicles
-        formData.vehicles.forEach(async (vehicle) => {
+        for (const vehicle of formData.vehicles) {
             const vehiclePositions = positions.vehicles[vehicle.nom];
+           
+
+         
+
+            
+
             if (vehiclePositions) {
-                // firstPage.drawText(vehicle.nom, {
-                //     x: vehiclePositions.nom.x,
-                //     y: vehiclePositions.nom.y,
-                //     ...textStyle
-                // });
+
+                addPhotos(vehicle, vehiclePositions).then(() => {
+                    console.log('Photos added for vehicle:', vehicle.nom);
+                });
+
                 firstPage.drawText(vehicle.marque, {
                     x: vehiclePositions.marque.x,
                     y: vehiclePositions.marque.y,
                     ...textStyle
                 });
+
+// Draw photos
+
+
                 firstPage.drawText(vehicle.numero_immatriculation, {
                     x: vehiclePositions.numeroImmatriculation.x,
                     y: vehiclePositions.numeroImmatriculation.y,
                     ...textStyle
                 });
-                // firstPage.drawText(vehicle.degats_apparents, {
-                //     x: vehiclePositions.degatsApparents.x,
-                //     y: vehiclePositions.degatsApparents.y,
-                //     ...textStyle
-                // });
 
                    // Split degatsApparents into two lines
                    const degatsApparentsLines = splitTextIntoLines(vehicle.degats_apparents, 30);
@@ -190,6 +239,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                        });
                    });
 
+
                    const observationsLines = splitTextIntoLines(vehicle.observations, 60);
                    const lineHeightss = 7; // Adjust as needed for spacing
    
@@ -202,11 +252,9 @@ async function fillPDF(templatePath, outputPath, formData) {
                    });
               
 
-                // firstPage.drawText(vehicle.observations, {
-                //     x: vehiclePositions.observations.x,
-                //     y: vehiclePositions.observations.y,
-                //     ...textStyle
-                // });
+                
+
+                        console.log('nbr images', vehicle.photos[0].images.length)
                 firstPage.drawText(vehicle.sens_suivi_venant, {
                     x: vehiclePositions.sensSuiviVenants.x,
                     y: vehiclePositions.sensSuiviVenants.y,
@@ -217,78 +265,16 @@ async function fillPDF(templatePath, outputPath, formData) {
                     y: vehiclePositions.sensSuiviAllants.y,
                     ...textStyle
                 });
-                // firstPage.drawText(vehicle.point_de_choc_initial.description, {
-                //     x: vehiclePositions.pointDeChocInitial.x,
-                //     y: vehiclePositions.pointDeChocInitial.y,
-                //     ...textStyle
-                // });
 
-                // Load and draw initial impact image
-                const initialImpactImagePath = path.join(__dirname, '../', vehicle.point_de_choc_initial.url); // Update with dynamic path
-                if (fs.existsSync(initialImpactImagePath)) {
-                    const initialImpactImageBytes = fs.readFileSync(initialImpactImagePath);
-                    const initialImpactImage = await pdfDoc.embedPng(initialImpactImageBytes); // Or embedJpg if your image is a JPEG
-                    const { x, y } = vehiclePositions.pointDeChocInitial;
-                    firstPage.drawImage(initialImpactImage, {
-                        x: x + 20, // Position adjustment for image
-                        y: y - 60, // Position adjustment for image
-                        width: 102,
-                        height: 80,
-                    });
-                } else {
-                    console.error(`Image not found at: ${initialImpactImagePath}`);
-                }
+             
+                
 
                 // Draw photos
                 const photoPositions = vehiclePositions.photos;
                 let photoIndex = 0;
 
-                // Function to draw a photo
-                const drawPhoto = async (photoUrl, photoX, photoY) => {
-                    if (photoUrl) {
-                        const photoPath = path.join(__dirname, '../', photoUrl);
-                        if (fs.existsSync(photoPath)) {
-                            const photoBytes = fs.readFileSync(photoPath);
-                            const photoImage = await pdfDoc.embedPng(photoBytes); // Or embedJpg if your image is a JPEG
-                            firstPage.drawImage(photoImage, {
-                                x: photoX,
-                                y: photoY,
-                                width: 50,
-                                height: 50,
-                            });
-                        } else {
-                            console.error(`Image not found at: ${photoPath}`);
-                        }
-                    }
-                };
 
-                // Draw individual photos with adjustments for each vehicle
-                if (vehicle.photos.carte_grise_avant) {
-                    await drawPhoto(vehicle.photos.carte_grise_avant, photoPositions.x + (photoIndex * 55), photoPositions.y);
-                    photoIndex++;
-                }
-                if (vehicle.photos.carte_grise_arriere) {
-                    await drawPhoto(vehicle.photos.carte_grise_arriere, photoPositions.x + (photoIndex * 55), photoPositions.y);
-                    photoIndex++;
-                }
-                if (vehicle.photos.permis_conduire_avant) {
-                    await drawPhoto(vehicle.photos.permis_conduire_avant, photoPositions.x + (photoIndex * 55), photoPositions.y);
-                    photoIndex++;
-                }
-                if (vehicle.photos.permis_conduire_arriere) {
-                    await drawPhoto(vehicle.photos.permis_conduire_arriere, photoPositions.x + (photoIndex * 55), photoPositions.y);
-                    photoIndex++;
-                }
-                if (vehicle.photos.attestation_assurance) {
-                    await drawPhoto(vehicle.photos.attestation_assurance, photoPositions.x + (photoIndex * 55), photoPositions.y);
-                    photoIndex++;
-                }
-                if (vehicle.photos.multiple_photos) {
-                    for (const photoUrl of vehicle.photos.multiple_photos) {
-                        await drawPhoto(photoUrl, photoPositions.x + (photoIndex * 55), photoPositions.y);
-                        photoIndex++;
-                    }
-                }
+
 
                 const totalCircumstances = 17;
                 const circumstancesX = vehiclePositions.circonstances.x;
@@ -404,7 +390,8 @@ async function fillPDF(templatePath, outputPath, formData) {
                     ...textStyle
                 });
             }
-        });
+        };
+        await wait(14000);
 
         // Save the filled PDF
         const pdfBytes = await pdfDoc.save();

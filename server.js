@@ -12,7 +12,10 @@ const userRoutes = require('./routes/userRoutes.js');
 const constatRoutes = require('./routes/constatRoutes.js');
 const vehiculeRoutes = require('./routes/vehiculeRoutes.js');
 const pdfRoutes = require('./routes/pdfRoutes');
+const cors = require('cors')
+app.use(cors());
 
+app.use(express.json({limit: '50mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
