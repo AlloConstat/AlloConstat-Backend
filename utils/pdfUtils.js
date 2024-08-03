@@ -41,8 +41,8 @@ async function fillPDF(templatePath, outputPath, formData) {
                    // nom: { x: 50, y: 600 },
                     marque: { x: 91, y: 349 },
                     numeroImmatriculation: { x: 120, y: 332 },
-                    degatsApparents: { x: 30, y: 134 },
-                    observations: { x: 30, y: 100 },
+                    degatsApparents: { x: 33, y: 134 },
+                    observations: { x: 33, y: 100 },
                     sensSuiviVenants: { x: 72, y: 300 },
                     sensSuiviAllants: { x: 65, y: 284 },
                     // pointDeChocInitial: { x: 28, y: 216 },
@@ -75,7 +75,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                     marque: { x: 450, y: 349 },
                     numeroImmatriculation: { x: 470, y: 332 },
                     degatsApparents: { x: 440, y: 130 },
-                    observations: { x: 310, y: 100 },
+                    observations: { x: 312, y: 100 },
                     sensSuiviVenants: { x: 425, y: 300 },
                     sensSuiviAllants: { x: 415, y: 284 },
                    // pointDeChocInitial: { x: 433, y: 220 },
@@ -177,10 +177,10 @@ async function fillPDF(templatePath, outputPath, formData) {
                 if (title) {
                     page.drawText(title, {
                         x: posX,
-                        y: posY - 220,
+                        y: posY -30,
                         ...textStyle,
-                        size: 12,
-                        color: rgb(1, 0, 0), // Red color for the title
+                        size: 16,
+                        color: rgb(0, 0, 0), // Red color for the title
                     });
                 }
         
@@ -202,20 +202,20 @@ async function fillPDF(templatePath, outputPath, formData) {
           
         
             const titles = [
-                "Carte Grise A", "Carte Grise A",
+                "Carte Grise Face A", "Carte Grise !Face A",
                 "Permis de conduire A", "Permis de conduire A",
-                "Face Avant Gauche Vehicule A", "Face Avant Vehicule A",
-                "Face Avant Droit Vehicule A", "Face Droit Vehicule A",
-                "Face Derriere Droit Vehicule A", "Face Derriere Vehicule A",
-                "Face Derriere Gauche Vehicule A", "Face Gauche Vehicule A",
+                "Face Avant Gauche  A", "Face Avant  A",
+                "Face Avant Droit  A", "Face Droit  A",
+                "Face Derriere Droit  A", "Face Derriere  A",
+                "Face Derriere Gauche  A", "Face Gauche  A",
             ];
             const titles1 = [
-                "Carte Grise B", "Carte Grise B",
+                "Carte Grise Face B", "Carte Grise !Face B",
                 "Permis de conduire B", "Permis de conduire B",
-                "Face Avant Gauche Vehicule B", "Face Avant Vehicule B",
-                "Face Avant Droit Vehicule B", "Face Droit Vehicule B",
-                "Face Derriere Droit Vehicule B", "Face Derriere Vehicule B",
-                "Face Derriere Gauche Vehicule B", "Face Gauche Vehicule B"
+                "Face Avant Gauche  B", "Face Avant  B",
+                "Face Avant Droit  B", "Face Droit  B",
+                "Face Derriere Droit  B", "Face Derriere  B",
+                "Face Derriere Gauche  B", "Face Gauche  B"
             ];
         
             
@@ -231,12 +231,10 @@ async function fillPDF(templatePath, outputPath, formData) {
                     if(indice == 0){
                         const title = titles.shift() || null;
                         await drawPhotoWithTitle(image, posX, posY, title, page);
-                        console.log('indice A', indice)
                     }
                     else {
                         const title1 = titles1.shift() || null;
                         await drawPhotoWithTitle(image, posX, posY, title1, page);
-                        console.log('indice B', indice)
 
                     }
                    
@@ -286,6 +284,28 @@ async function fillPDF(templatePath, outputPath, formData) {
                 console.error('Error drawing image:', error);
             }
         };
+
+        const drawcroquis = async (imageBase64, posX, posY, page) => {
+            try {
+                const base64Data = imageBase64.split(',')[1];
+                const imageBytes = Buffer.from(base64Data, 'base64');
+                const embeddedImage = await pdfDoc.embedPng(imageBytes);
+        
+                page.drawImage(embeddedImage, {
+                    x: posX,
+                    y: posY ,
+                    width: 90,
+                    height: 150,
+                });
+        
+                console.log('Image added successfully.');
+            } catch (error) {
+                console.error('Error drawing image:', error);
+            }
+        };
+
+        const image64 = formData.croquis; 
+        await drawcroquis(image64, 180, 120, firstPage)
 
         // Draw vehicles
         for (const vehicle of formData.vehicles) {
