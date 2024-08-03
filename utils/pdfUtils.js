@@ -249,6 +249,14 @@ async function fillPDF(templatePath, outputPath, formData) {
                         posY -= 280; // Move to the next row
                     }
                 }
+            if(indice ==0){
+                const imageBase64 = photo.pointChoc; // Assuming pointChoc is in base64 format
+                await drawpointChoc(imageBase64, 45, 160, firstPage)
+            }else if (indice==1){
+                const imageBase64 = photo.pointChoc; // Assuming pointChoc is in base64 format
+                await drawpointChoc(imageBase64, 450, 160, firstPage)
+            }
+                
                
             }
         
@@ -256,7 +264,28 @@ async function fillPDF(templatePath, outputPath, formData) {
         };
         
         
-let indice = 0 ;
+        let indice = 0 ;
+
+
+        // image wa7da lel pointChoc:
+        const drawpointChoc = async (imageBase64, posX, posY, page) => {
+            try {
+                const base64Data = imageBase64.split(',')[1];
+                const imageBytes = Buffer.from(base64Data, 'base64');
+                const embeddedImage = await pdfDoc.embedPng(imageBytes);
+        
+                page.drawImage(embeddedImage, {
+                    x: posX,
+                    y: posY ,
+                    width: 110,
+                    height: 90,
+                });
+        
+                console.log('Image added successfully.');
+            } catch (error) {
+                console.error('Error drawing image:', error);
+            }
+        };
 
         // Draw vehicles
         for (const vehicle of formData.vehicles) {
@@ -268,12 +297,16 @@ let indice = 0 ;
                     console.log('Photos added for vehicle:', vehicle.nom);
                 });
                 await wait(20);
-indice ++;
+                indice ++;
+
+
                 firstPage.drawText(vehicle.marque, {
                     x: vehiclePositions.marque.x,
                     y: vehiclePositions.marque.y,
                     ...textStyle
                 });
+
+
 
 // Draw photos
 
@@ -311,7 +344,7 @@ indice ++;
 
                 
 
-                        console.log('nbr images', vehicle.photos[0].images.length)
+                       
                 firstPage.drawText(vehicle.sens_suivi_venant, {
                     x: vehiclePositions.sensSuiviVenants.x,
                     y: vehiclePositions.sensSuiviVenants.y,
