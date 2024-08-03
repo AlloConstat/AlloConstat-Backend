@@ -35,7 +35,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                 yes: { x: 136, y: 687 }, // Position for "Oui"
                 no: { x: 65, y: 687 }   // Position for "Non"
             },
-            temoins: { x: 180, y: 685 },
+            temoins: { x: 180, y: 690 },
             vehicles: {
                 A: {
                    // nom: { x: 50, y: 600 },
@@ -148,115 +148,127 @@ async function fillPDF(templatePath, outputPath, formData) {
         });
 
         // Draw temoins
-      /*  formData.temoins.forEach((temoin, index) => {
-            const temoinYPosition = positions.temoins.y - (index * 15);
+        if (formData.temoins) {
+            const temoin = formData.temoins;
+            const temoinYPosition = positions.temoins.y;
             firstPage.drawText(`Nom: ${temoin.nom}, Adresse: ${temoin.adresse}, Téléphone: ${temoin.telephone}`, {
                 x: positions.temoins.x,
                 y: temoinYPosition,
                 ...textStyle
             });
-        });*/
+        }
+ 
+     
 
 
-        // const drawsPhotos = async (photo, posX, posY) => {
-        //     try {
-        //         // Remove the base64 data URL prefix
-        //         const base64Data = photo.split(',')[1]; // Assumes the format is "data:image/png;base64,<base64_data>"
-        
-        //         const photoBytes = Buffer.from(base64Data, 'base64');
-        
-        //         // Embed the PNG image
-        //         const embeddedPhoto = await pdfDoc.embedPng(photoBytes);
-        
-        //         // Draw image on the second page
-        //         secondPage.drawImage(embeddedPhoto, {
-        //             x: posX,
-        //             y: posY,
-        //             width: 100,
-        //             height: 100,
-        //         });
-        
-        //         console.log('Photo added successfully.');
-        //     } catch (error) {
-        //         console.error('Error drawing photos:', error);
-        //     }
-        // };
-
-        const drawPhotoWithTitle = async (photo, posX, posY, page) => {
+        const drawPhotoWithTitle = async (photo, posX, posY, title, page) => {
             try {
                 const base64Data = photo.split(',')[1];
                 const photoBytes = Buffer.from(base64Data, 'base64');
                 const embeddedPhoto = await pdfDoc.embedPng(photoBytes);
-
+        
                 page.drawImage(embeddedPhoto, {
                     x: posX,
-                    y: posY -250,
+                    y: posY - 250,
                     width: 200,
                     height: 200,
                 });
-
-                page.drawText('Tester les images', {
-                    x: posX,
-                    y: posY -220,
-                    ...textStyle,
-                    size: 12,
-                    color: rgb(1, 0, 0), // Red color for the title
-                });
-
+        
+                if (title) {
+                    page.drawText(title, {
+                        x: posX,
+                        y: posY - 220,
+                        ...textStyle,
+                        size: 12,
+                        color: rgb(1, 0, 0), // Red color for the title
+                    });
+                }
+        
                 console.log('Photo added successfully.');
             } catch (error) {
                 console.error('Error drawing photos:', error);
             }
         };
+        
         const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        const addPhotos = async (vehicle) => {
+        
+        const addPhotos = async (vehicle, indice ) => {
             let pageIndex = 2;
             let posX = 80;
             let posY = 800;
             let imageCount = 0;
             let page = pages.length > pageIndex ? pages[pageIndex] : pdfDoc.addPage();
-            pageIndex+=1;
+            pageIndex += 1;
+          
+        
+            const titles = [
+                "Carte Grise A", "Carte Grise A",
+                "Permis de conduire A", "Permis de conduire A",
+                "Face Avant Gauche Vehicule A", "Face Avant Vehicule A",
+                "Face Avant Droit Vehicule A", "Face Droit Vehicule A",
+                "Face Derriere Droit Vehicule A", "Face Derriere Vehicule A",
+                "Face Derriere Gauche Vehicule A", "Face Gauche Vehicule A",
+            ];
+            const titles1 = [
+                "Carte Grise B", "Carte Grise B",
+                "Permis de conduire B", "Permis de conduire B",
+                "Face Avant Gauche Vehicule B", "Face Avant Vehicule B",
+                "Face Avant Droit Vehicule B", "Face Droit Vehicule B",
+                "Face Derriere Droit Vehicule B", "Face Derriere Vehicule B",
+                "Face Derriere Gauche Vehicule B", "Face Gauche Vehicule B"
+            ];
+        
+            
             for (const photo of vehicle.photos) {
                 for (const image of photo.images) {
                     if (imageCount === 4) {
                         page = pages.length > pageIndex ? pages[pageIndex] : pdfDoc.addPage();
                         posX = 80;
-                        posY = 800; 
+                        posY = 800;
                         imageCount = 0;
-                       
                     }
+        
+                    if(indice == 0){
+                        const title = titles.shift() || null;
+                        await drawPhotoWithTitle(image, posX, posY, title, page);
+                        console.log('indice A', indice)
+                    }
+                    else {
+                        const title1 = titles1.shift() || null;
+                        await drawPhotoWithTitle(image, posX, posY, title1, page);
+                        console.log('indice B', indice)
 
-                    
-                    await drawPhotoWithTitle(image, posX, posY, page);
-
+                    }
+                   
+        
                     posX += 250; // Adjust spacing between images as needed
                     imageCount++;
-
+        
                     if (imageCount === 2) {
                         posX = 80;
                         posY -= 280; // Move to the next row
                     }
                 }
+               
             }
+        
             console.log('All photos processed successfully.');
         };
-
+        
+        
+let indice = 0 ;
 
         // Draw vehicles
         for (const vehicle of formData.vehicles) {
             const vehiclePositions = positions.vehicles[vehicle.nom];
-           
-
-         
-
-            
-
+        
             if (vehiclePositions) {
 
-                addPhotos(vehicle).then(() => {
+                addPhotos(vehicle, indice).then(() => {
                     console.log('Photos added for vehicle:', vehicle.nom);
                 });
-
+                await wait(20);
+indice ++;
                 firstPage.drawText(vehicle.marque, {
                     x: vehiclePositions.marque.x,
                     y: vehiclePositions.marque.y,
@@ -436,7 +448,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                 });
             }
         };
-        await wait(5000);
+        //await wait(30);
 
         // Save the filled PDF
         const pdfBytes = await pdfDoc.save();
