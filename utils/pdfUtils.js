@@ -25,7 +25,7 @@ async function fillPDF(templatePath, outputPath, formData) {
 
         const positions = {
             dateAccident: { x: 50, y: 720 },
-            heure_accident: { x: 135, y: 720 },
+            heure_accident: { x: 128, y: 720 },
             lieu: { x: 180, y: 720 },
             blesses: { 
                 yes: { x: 535, y: 721 }, // Position for "Oui"
@@ -50,7 +50,7 @@ async function fillPDF(templatePath, outputPath, formData) {
                     assurance: {
                         nom: { x: 110, y: 632 },
                         numeroAssurance: { x: 118, y: 615 },
-                        localisation: { x: 60, y: 598 },
+                        localisation: { x: 62, y: 598 },
                         date_validiteDebut: { x: 140, y: 565 },
                         date_validiteFin: { x: 50, y: 565 },
                     },
