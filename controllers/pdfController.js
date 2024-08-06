@@ -11,10 +11,6 @@ exports.createConstat = async (req, res) => {
         const { vehicleType, userId, ...constatData } = req.body;
         let newConstat;
 
-        console.log('\ntype',constatData.report.vehicleType)
-
-        console.log('\n', constatData )
-        console.log('\n',constatData.report.vehicles)
         if (constatData.report.vehicleType === 'car') {
             
             newConstat = new Constat({
@@ -23,12 +19,12 @@ exports.createConstat = async (req, res) => {
                 timestamp: new Date(),
                 nbrVehicles: constatData.report.vehicles.length,
             });
-        } else if (constatData.report.vehicleType === 'boat') {
+        } else if (vehicleType === 'boat') { //modifier pour tester avec POSTMAN
             newConstat = new ConstatBateau({
                 userId,
-                lieu: constatData.report.lieu,
+                lieu: constatData.lieu,
                 timestamp: new Date(),
-                nbrbateaux : constatData.report.bateaux.length,
+                nbrbateaux : constatData.bateaux.length, //ajouter  .report
             });
         } else {
 
@@ -46,14 +42,14 @@ exports.createConstat = async (req, res) => {
             outputPathSimple = path.join( __dirname,`../output/voitures/constat_${newConstat._id}.pdf`);
             outputPathDuplicata = path.join(__dirname,`../output/voitures/constat_${newConstat._id}_duplicata.pdf`);
             await fillPDF(templatePath, outputPathSimple, constatData.report);
-        } else if (constatData.report.vehicleType === 'boat') {
+        } else if (vehicleType === 'boat') {
             templatePath = path.join( __dirname,'../utils/template_bateau.pdf');
             outputPathSimple = path.join(__dirname, `../output/bateaux/constat_bateau_${newConstat._id}.pdf`);
             outputPathDuplicata = path.join(__dirname, `../output/bateaux/constat_bateau_${newConstat._id}_duplicata.pdf`);
             await fillPDFBoat(templatePath, outputPathSimple, constatData);
         }
         
-        //await addDuplicataImage(outputPathSimple, outputPathDuplicata);
+        await addDuplicataImage(outputPathSimple, outputPathDuplicata);
         //await wait(13000);
         newConstat.pdfUrls = {
             simple: outputPathSimple,
