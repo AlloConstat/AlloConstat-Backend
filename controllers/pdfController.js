@@ -12,17 +12,22 @@ exports.createConstat = async (req, res) => {
         let newConstat;
 
         if (constatData.report.vehicleType === 'car') {
-            
+
             newConstat = new Constat({
                 userId,
-                lieu : constatData.report.lieu,
+                nbrVehicles :  constatData.report.vehicles.length,
+                matriculeA : constatData.report.vehicles[0].numero_immatriculation,
+                region : constatData.report.lieu,
                 timestamp: new Date(),
                 nbrVehicles: constatData.report.vehicles.length,
             });
+            if( constatData.report.vehicles.length >1){
+                newConstat.matriculeB = constatData.report.vehicles[1].numero_immatriculation ;
+            }
         } else if (vehicleType === 'boat') { //modifier pour tester avec POSTMAN
             newConstat = new ConstatBateau({
                 userId,
-                lieu: constatData.lieu,
+                region: constatData.lieu,
                 timestamp: new Date(),
                 nbrbateaux : constatData.bateaux.length, //ajouter  .report
             });
