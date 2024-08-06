@@ -7,7 +7,7 @@ const BateauSchema = new Schema({
 });
 
 const ConstatBateauSchema = new Schema({
-    lieu: String,
+    region: String,
     pdfUrls: {
         simple: String,
         duplicata: String,

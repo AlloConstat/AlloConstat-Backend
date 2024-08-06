@@ -6,13 +6,15 @@ const vehicleSchema = new mongoose.Schema({
 });
 
 const constatSchema = new mongoose.Schema({
-    lieu: String,
+    region: String,
     pdfUrls: {
         simple: String,
         duplicata: String,
     },
     timestamp: { type: Date, default: Date.now },
-    nbrVehicles: Number,
+    nbrVehicles: { type: Number, default: 1 },
+    matriculeA: { type: String },
+    matriculeB: { type: String },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 

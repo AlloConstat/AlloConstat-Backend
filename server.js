@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
@@ -20,6 +21,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
+
+app.use('/pdfs', express.static(path.join(__dirname, 'output/voitures')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
