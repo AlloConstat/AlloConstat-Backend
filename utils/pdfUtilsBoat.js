@@ -75,7 +75,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                         prenom: { x: 78, y: 621 },
                         adresse: { x: 40, y: 595 },
                     },
-                    circonstances: { x: 218, y: 620 },
+                    circonstances: { x: 217, y: 642 },
                     nbr_de_choix: {x: 216, y: 266 }
                 },
                 B: {
@@ -115,7 +115,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                         adresse: { x: 390, y: 595 },
                         
                     },
-                    circonstances: { x: 372, y: 620 },
+                    circonstances: { x: 373, y: 642 },
                     nbr_de_choix: {x: 365, y: 266 }
                 }
             }
@@ -293,25 +293,50 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                 }
                 
                 
-                // Draw circumstances
-                const totalCircumstances = 17;
-                const circumstancesX = bateauPositions.circonstances.x;
-                const baseCircumstancesY = bateauPositions.circonstances.y;
-                const lineHeight = 20;
-                const newLineHeight = 20.3;
-                
-                for (let i = 1; i <= totalCircumstances; i++) {
-                    const currentLineHeight = i >= 9 ? newLineHeight : lineHeight;
-                    const yPosition = baseCircumstancesY - ((i - 1) * currentLineHeight);
-                    const isCircumstancePresent = bateau.circonstances.includes(i.toString());
-                    const text = isCircumstancePresent ? 'x' : '';
-                
-                    firstPage.drawText(text, {
-                        x: circumstancesX,
-                        y: yPosition,
-                        ...textStyle
-                    });
-                }
+// Draw circumstances
+const totalCircumstances = 17;
+const circumstancesX = bateauPositions.circonstances.x;
+const baseCircumstancesY = bateauPositions.circonstances.y;
+const lineHeight = 13.8;
+const increasedLineHeight = 27; // Distance plus grande entre certains éléments
+const increasedLineHeights = 60;
+const increasedLineHeightss = 115;
+for (let i = 1; i <= totalCircumstances; i++) {
+    let yPosition;
+
+    if (i <= 5) {
+        // Les 5 premiers ont le même espacement
+        yPosition = baseCircumstancesY - ((i - 1) * lineHeight);
+    } else if (i === 6) {
+        // La 6ème est un peu plus loin
+        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeight;
+    } else if (i >= 7 && i <= 10) {
+        // Les 7ème à 10ème ont la même distance que les 5 premières
+        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeight - ((i - 6) * lineHeight);
+    } else if (i === 11) {
+        // La 11ème est encore plus loin
+        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeights - (4 * lineHeight) - increasedLineHeight;
+    } else if (i >= 11 && i <= 12)  {
+        // Les 12ème à 17ème ont la même distance que les autres sauf 11ème
+        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeights - (4 * lineHeight) - increasedLineHeight - ((i - 11) * lineHeight);
+    } else if (i === 13) {
+        // La 13ème est un peu plus loin
+        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeightss - (4 * lineHeight) - increasedLineHeight - (2 * lineHeight);
+    } else {
+        // Les 14ème à 16ème continuent avec la même distance que la 13ème
+        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeightss - (4 * lineHeight) - increasedLineHeight - (2 * lineHeight) - ((i - 13) * lineHeight);
+    }
+
+    const isCircumstancePresent = bateau.circonstances.includes(i.toString());
+    const text = isCircumstancePresent ? 'x' : '';
+
+    firstPage.drawText(text, {
+        x: circumstancesX,
+        y: yPosition,
+        ...textStyle
+    });
+}
+
 
                 firstPage.drawText(bateau.circonstances.length.toString(), {
                     x: bateauPositions.nbr_de_choix.x,
