@@ -75,22 +75,62 @@ exports.getCarConstatById = async (req, res) => {
   };
 
 
-
+  const fs = require('fs');
+  const path = require('path');
+  
   exports.deleteConstatById = async (req, res) => {
-    try {
-        const { vehicleType } = req.body;
+      try {
+          const { vehicleType } = req.body;
+  
+          // Choisir le modèle en fonction du type de véhicule
+          const Model = vehicleType === 'car' ? Constat : ConstatBateau;
+  
+          // Chercher et supprimer le constat
+          const constat = await Model.findByIdAndDelete(req.params.id);
+          console.log('id',req.params.id,'vehicleType',vehicleType)
+          if (!constat) return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
+  
+          if (vehicleType === 'car') {
+              // Construire les chemins des fichiers à supprimer
+              const filePath1 = path.join( __dirname,`../output/voitures/constat_${req.params._id}.pdf`);
+              const filePath2 = path.join(__dirname,`../output/voitures/constat_${req.params._id}_duplicata.pdf`);
+  
+              // Supprimer les fichiers
+              fs.unlink(filePath1, (err) => {
+                  if (err && err.code !== 'ENOENT') {
+                      console.error('Erreur lors de la suppression du fichier:', filePath1, err);
+                  }
+              });
+  
+              fs.unlink(filePath2, (err) => {
+                  if (err && err.code !== 'ENOENT') {
+                      console.error('Erreur lors de la suppression du fichier:', filePath2, err);
+                  }
+              });
+          } else if  (vehicleType === 'board') {
+            // Construire les chemins des fichiers à supprimer
+            const filePath1 = path.join(__dirname, `../output/bateaux/constat_bateau_${req.params.id}.pdf`);
+            const filePath2 = path.join(__dirname, `../output/bateaux/constat_bateau_${req.params.id}_duplicata.pdf`);
 
-        // Choisir le modèle en fonction du type de véhicule
-        const Model = vehicleType === "car" ? Constat : ConstatBateau;
+            // Supprimer les fichiers
+            fs.unlink(filePath1, (err) => {
+                if (err && err.code !== 'ENOENT') {
+                    console.error('Erreur lors de la suppression du fichier:', filePath1, err);
+                }
+            });
 
-        // Chercher et supprimer le constat
-        const constat = await Model.findByIdAndDelete(req.params.id);
-        if (!constat) return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
-
-        res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, data: constat });
-    } catch (err) {
-        res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
-    }
-};
+            fs.unlink(filePath2, (err) => {
+                if (err && err.code !== 'ENOENT') {
+                    console.error('Erreur lors de la suppression du fichier:', filePath2, err);
+                }
+            });
+        } 
+  
+          res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS });
+      } catch (err) {
+          res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
+      }
+  };
+  
 
 
