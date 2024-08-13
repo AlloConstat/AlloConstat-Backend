@@ -75,26 +75,22 @@ exports.getCarConstatById = async (req, res) => {
   };
 
 
-  // delete constat :
 
-  exports.deleteCarConstatByID = async (req, res) => {
+  exports.deleteConstatById = async (req, res) => {
     try {
-        const constat = await Constat.findByIdAndDelete(req.params.id);
+        const { vehicleType } = req.body;
+
+        // Choisir le modèle en fonction du type de véhicule
+        const Model = vehicleType === "car" ? Constat : ConstatBateau;
+
+        // Chercher et supprimer le constat
+        const constat = await Model.findByIdAndDelete(req.params.id);
         if (!constat) return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
+
         res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, data: constat });
     } catch (err) {
         res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
     }
 };
 
-
-exports.deleteBoatConstatByID = async (req, res) => {
-    try {
-        const constat = await ConstatBateau.findByIdAndDelete(req.params.id);
-        if (!constat) return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
-        res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, data: constat });
-    } catch (err) {
-        res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
-    }
-};
 
