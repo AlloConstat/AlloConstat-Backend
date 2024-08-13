@@ -15,6 +15,7 @@ exports.createConstat = async (req, res) => {
 
             newConstat = new Constat({
                 userId,
+                vehicleType: vehicleType,
                 nbrVehicles :  constatData.report.vehicles.length,
                 matriculeA : constatData.report.vehicles[0].numero_immatriculation,
                 region : constatData.report.lieu,
@@ -24,20 +25,25 @@ exports.createConstat = async (req, res) => {
             if( constatData.report.vehicles.length >1){
                 newConstat.matriculeB = constatData.report.vehicles[1].numero_immatriculation ;
             }
-        } else if (constatData.report.vehicleType === 'boat') { //modifier pour tester avec POSTMAN
+        } else if (constatData.report.vehicleType === 'boat') { 
             newConstat = new ConstatBateau({
                 userId,
+                vehicleType: vehicleType,
+                bateauA : constatData.report.bateaux[0].numeroImmatriculation,
                 region: constatData.report.lieu,
                 timestamp: new Date(),
-                nbrbateaux : constatData.report.bateaux.length, //ajouter  .report
+                nbrbateaux : constatData.report.bateaux.length, 
             });
+            if( constatData.report.bateaux.length >1){
+                newConstat.matriculeB = constatData.report.bateaux[1].numeroImmatriculation ;
+            }
         } else {
 
             return res.status(ResponseModels.BAD_REQUEST.status).send({ ...ResponseModels.BAD_REQUEST, message: 'Invalid vehicle type' });
         }
 
         
-        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        // const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         let templatePath;
         let outputPathSimple;
         let outputPathDuplicata;
@@ -55,7 +61,7 @@ exports.createConstat = async (req, res) => {
         }
         
         await addDuplicataImage(outputPathSimple, outputPathDuplicata);
-        //await wait(13000);
+        
         newConstat.pdfUrls = {
             simple: outputPathSimple,
             duplicata: outputPathDuplicata,

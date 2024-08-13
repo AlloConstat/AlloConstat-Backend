@@ -15,6 +15,7 @@ const constatSchema = new mongoose.Schema({
     nbrVehicles: { type: Number, default: 1 },
     matriculeA: { type: String },
     matriculeB: { type: String },
+    vehicleType: {type: String},
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
