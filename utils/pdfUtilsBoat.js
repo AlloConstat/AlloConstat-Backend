@@ -8,7 +8,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
         const existingPdfBytes = fs.readFileSync(templatePath);
         const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
-        // Register fontkit
+        console.log('data',formData)
         pdfDoc.registerFontkit(fontkit);
 
         // Load custom font (Arial)
@@ -24,14 +24,13 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
             heure_accident: { x: 470, y: 812 },
             lieu: { x: 342, y: 786},
             blesses: { 
-                yes: { x: 454, y: 742 }, // Position for "Oui"
-                no: { x: 510, y: 742 }   // Position for "Non"
+                yes: { x: 454, y: 742 }, 
+                no: { x: 510, y: 742 }   
             }, 
             type: { 
-                yes: { x: 454, y: 774 }, // Position for "Oui"
-                no: { x: 520, y: 774 }   // Position for "Non"
+                yes: { x: 454, y: 774 }, 
+                no: { x: 520, y: 774 }   
             },
-            // temoins: { x: 100, y: 7 },
             temoins: {
                 nomTel: { x: 71, y: 756 },
                 bateauAdresse: { x: 71, y: 744 }
@@ -39,7 +38,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
             bateaux: {
                 A: {
                     marque: { x: 78, y: 536 },
-                    points_endommages : { x: 97, y: 166},
+                    points_endommages : { x: 97, y: 154},
                     numeroImmatriculation: { x: 125, y: 510 },
                     degatsApparents: { x: 40, y: 60 },
                     jetski_planche: { x: 415, y: 284 },
@@ -55,11 +54,11 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                    // photos: { x: 450, y: 360 },
                     assurance: {
                         nom: { x: 40, y: 440 },
-                        numeroAssurance: { x: 90, y: 427 },
+                        numero_assurance: { x: 90, y: 427 },
                         localisation: { x: 115, y: 414 },
                         dommages: { 
-                            yes: { x: 117, y: 390 }, // Position for "Oui"
-                            no: { x: 168, y: 390 }   // Position for "Non"
+                            yes: { x: 117, y: 390 }, 
+                            no: { x: 168, y: 390 } 
                         } 
                     },
                     pilote: {
@@ -67,7 +66,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                         prenom: { x: 85, y: 329 },
                         adresse: { x: 40, y: 305 },
                         categorie: { x: 190, y: 277 },
-                        par: { x: 95, y: 265 },
+                        delivrePar: { x: 95, y: 265 },
                         date_delivration: { x: 150, y: 265 },
                     },
                     assure: {
@@ -94,11 +93,11 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                     jetski_planche: { x: 415, y: 284 },
                     assurance: {
                         nom: { x: 390, y: 440 },
-                        numeroAssurance: { x: 445, y: 427 },
+                        numero_assurance: { x: 445, y: 427 },
                         localisation: { x: 465, y: 414 },
                         dommages: { 
-                            yes: { x: 470, y: 390 }, // Position for "Oui"
-                            no: { x: 521, y: 390 }   // Position for "Non"
+                            yes: { x: 470, y: 390 }, 
+                            no: { x: 521, y: 390 } 
                         }
                     },
                     pilote: {
@@ -106,7 +105,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                         prenom: { x: 430, y: 333 },
                         adresse: { x: 390, y: 308 },
                         categorie: { x: 540, y: 282 },
-                        par: { x: 445, y: 268 },
+                        delivrePar: { x: 445, y: 268 },
                         date_delivration: { x: 525, y: 268 },
                     },
                     assure: {
@@ -180,11 +179,8 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
         ...textStyle
     });
     });
-
-
-   
-
-        // Draw bateaux
+       
+    // Draw bateaux
         formData.bateaux.forEach(async (bateau) => {
             const bateauPositions = positions.bateaux[bateau.nom];
             if (bateauPositions) {
@@ -195,8 +191,8 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                 });
 
 
-                        // Draw bateauType for bateaux A
-                        if (bateau.bateauType[0] == 1) {
+                       
+                        if (bateau.bateauType == "voile") {
                             firstPage.drawText('x', {
                                 x: bateauPositions.bateauType[1].x,
                                 y: bateauPositions.bateauType[1].y,
@@ -204,7 +200,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                             });
                         }
 
-                        if (bateau.bateauType[1] == 2) {
+                        if (bateau.bateauType == "moteur") {
                             firstPage.drawText('x', {
                                 x: bateauPositions.bateauType[2].x,
                                 y: bateauPositions.bateauType[2].y,
@@ -212,8 +208,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                             });
                         }
 
-                        if (bateau.bateauType[2] == 3) {
-                            console.log('d5aler')
+                        if (bateau.bateauType == "jet") {
                             firstPage.drawText('x', {
                                 x: bateauPositions.bateauType[3].x,
                                 y: bateauPositions.bateauType[3].y,
@@ -221,7 +216,7 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                             });
                         }
 
-                        if (bateau.bateauType[3] == 4) {
+                        if (bateau.bateauType == "planche") {
                             firstPage.drawText('x', {
                                 x: bateauPositions.bateauType[4].x,
                                 y: bateauPositions.bateauType[4].y,
@@ -266,24 +261,24 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                 const variables = bateauPositions.points_endommages.y + 26;
                 const pointsLineHeight = 13;
                 const newPointsLineHeight = 20.3;
-                const alternateX = pointsX + 98.5;// Exemple d'un second x pour les deux premiers points
-        
+                const alternateX = pointsX + 98.5; 
+                
                 for (let i = 0; i < Math.min(maxPoints, bateau.points_endommages.length); i++) {
-                    const point = bateau.points_endommages[i];
-                    
+                    const pointIndex = parseInt(bateau.points_endommages[i], 10); 
+                
                     let xPosition;
                     let yPosition;
                 
-                    // Déterminer les positions x et y
-                    if (i < 2) {
+                    
+                    if (pointIndex < 2) {
                         xPosition = pointsX;
-                        yPosition = basePointsY - (i * pointsLineHeight);
+                        yPosition = basePointsY - (pointIndex * pointsLineHeight);
                     } else {
-                        xPosition = alternateX;  // Espacer les cinq autres par des valeurs x
-                        yPosition = variables - (i * pointsLineHeight) ;
+                        xPosition = alternateX;  
+                        yPosition = variables - ((pointIndex - 2) * pointsLineHeight);
                     }
                 
-                    const text = point ? 'x' : '';
+                    const text = 'x'; 
                 
                     firstPage.drawText(text, {
                         x: xPosition,
@@ -293,49 +288,43 @@ async function fillPDFBoat(templatePath, outputPath, formData) {
                 }
                 
                 
-// Draw circumstances
-const totalCircumstances = 17;
-const circumstancesX = bateauPositions.circonstances.x;
-const baseCircumstancesY = bateauPositions.circonstances.y;
-const lineHeight = 13.8;
-const increasedLineHeight = 27; // Distance plus grande entre certains éléments
-const increasedLineHeights = 60;
-const increasedLineHeightss = 115;
-for (let i = 1; i <= totalCircumstances; i++) {
-    let yPosition;
+                
+    // Draw circumstances
+    const totalCircumstances = 17;
+    const circumstancesX = bateauPositions.circonstances.x;
+    const baseCircumstancesY = bateauPositions.circonstances.y;
+    const lineHeight = 13.8;
+    const increasedLineHeight = 27; 
+    const increasedLineHeights = 60;
+    const increasedLineHeightss = 115;
+    for (let i = 1; i <= totalCircumstances; i++) {
+        let yPosition;
 
-    if (i <= 5) {
-        // Les 5 premiers ont le même espacement
-        yPosition = baseCircumstancesY - ((i - 1) * lineHeight);
-    } else if (i === 6) {
-        // La 6ème est un peu plus loin
-        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeight;
-    } else if (i >= 7 && i <= 10) {
-        // Les 7ème à 10ème ont la même distance que les 5 premières
-        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeight - ((i - 6) * lineHeight);
-    } else if (i === 11) {
-        // La 11ème est encore plus loin
-        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeights - (4 * lineHeight) - increasedLineHeight;
-    } else if (i >= 11 && i <= 12)  {
-        // Les 12ème à 17ème ont la même distance que les autres sauf 11ème
-        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeights - (4 * lineHeight) - increasedLineHeight - ((i - 11) * lineHeight);
-    } else if (i === 13) {
-        // La 13ème est un peu plus loin
-        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeightss - (4 * lineHeight) - increasedLineHeight - (2 * lineHeight);
-    } else {
-        // Les 14ème à 16ème continuent avec la même distance que la 13ème
-        yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeightss - (4 * lineHeight) - increasedLineHeight - (2 * lineHeight) - ((i - 13) * lineHeight);
+        if (i <= 5) {
+            yPosition = baseCircumstancesY - ((i - 1) * lineHeight);
+        } else if (i === 6) {
+            yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeight;
+        } else if (i >= 7 && i <= 10) {
+            yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeight - ((i - 6) * lineHeight);
+        } else if (i === 11) {
+            yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeights - (4 * lineHeight) - increasedLineHeight;
+        } else if (i >= 11 && i <= 12)  {
+            yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeights - (4 * lineHeight) - increasedLineHeight - ((i - 11) * lineHeight);
+        } else if (i === 13) {
+            yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeightss - (4 * lineHeight) - increasedLineHeight - (2 * lineHeight);
+        } else {
+            yPosition = baseCircumstancesY - (5 * lineHeight) - increasedLineHeightss - (4 * lineHeight) - increasedLineHeight - (2 * lineHeight) - ((i - 13) * lineHeight);
+        }
+
+        const isCircumstancePresent = bateau.circonstances.includes(i.toString());
+        const text = isCircumstancePresent ? 'x' : '';
+
+        firstPage.drawText(text, {
+            x: circumstancesX,
+            y: yPosition,
+            ...textStyle
+        });
     }
-
-    const isCircumstancePresent = bateau.circonstances.includes(i.toString());
-    const text = isCircumstancePresent ? 'x' : '';
-
-    firstPage.drawText(text, {
-        x: circumstancesX,
-        y: yPosition,
-        ...textStyle
-    });
-}
 
 
                 firstPage.drawText(bateau.circonstances.length.toString(), {
@@ -351,8 +340,8 @@ for (let i = 1; i <= totalCircumstances; i++) {
                     ...textStyle
                 });
                 firstPage.drawText(bateau.assurance.numero_assurance, {
-                    x: bateauPositions.assurance.numeroAssurance.x,
-                    y: bateauPositions.assurance.numeroAssurance.y,
+                    x: bateauPositions.assurance.numero_assurance.x,
+                    y: bateauPositions.assurance.numero_assurance.y,
                     ...textStyle
                 });
                 firstPage.drawText(bateau.assurance.localisation, {
@@ -400,9 +389,9 @@ for (let i = 1; i <= totalCircumstances; i++) {
                     y: bateauPositions.pilote.categorie.y,
                     ...textStyle
                 });
-                firstPage.drawText(bateau.pilote.par, {
-                    x: bateauPositions.pilote.par.x,
-                    y: bateauPositions.pilote.par.y,
+                firstPage.drawText(bateau.pilote.delivrePar, {
+                    x: bateauPositions.pilote.delivrePar.x,
+                    y: bateauPositions.pilote.delivrePar.y,
                     ...textStyle
                 });
 

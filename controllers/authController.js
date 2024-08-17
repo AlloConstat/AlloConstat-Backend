@@ -40,11 +40,18 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
-        res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, token });
+
+        // Retourner l'objet user entier avec le token
+        res.status(ResponseModels.SUCCESS.status).send({
+            ...ResponseModels.SUCCESS,
+            token,
+            user: user.toObject() // Utilisation de toObject() pour convertir l'instance Mongoose en objet JavaScript simple
+        });
     } catch (err) {
         res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
     }
 };
+
 
 // Authentification avec Google OAuth
 exports.googleAuth = passport.authenticate('google', { scope: ['profile', 'email'] });

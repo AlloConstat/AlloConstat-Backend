@@ -15,6 +15,7 @@ exports.createConstat = async (req, res) => {
 
             newConstat = new Constat({
                 userId,
+                vehicleType: vehicleType,
                 nbrVehicles :  constatData.report.vehicles.length,
                 matriculeA : constatData.report.vehicles[0].numero_immatriculation,
                 region : constatData.report.lieu,
@@ -24,20 +25,25 @@ exports.createConstat = async (req, res) => {
             if( constatData.report.vehicles.length >1){
                 newConstat.matriculeB = constatData.report.vehicles[1].numero_immatriculation ;
             }
-        } else if (vehicleType === 'boat') { //modifier pour tester avec POSTMAN
+        } else if (constatData.report.vehicleType === 'boat') { 
             newConstat = new ConstatBateau({
                 userId,
-                region: constatData.lieu,
+                vehicleType: vehicleType,
+                bateauA : constatData.report.bateaux[0].numeroImmatriculation,
+                region: constatData.report.lieu,
                 timestamp: new Date(),
-                nbrbateaux : constatData.bateaux.length, //ajouter  .report
+                nbrbateaux : constatData.report.bateaux.length, 
             });
+            if( constatData.report.bateaux.length >1){
+                newConstat.matriculeB = constatData.report.bateaux[1].numeroImmatriculation ;
+            }
         } else {
 
             return res.status(ResponseModels.BAD_REQUEST.status).send({ ...ResponseModels.BAD_REQUEST, message: 'Invalid vehicle type' });
         }
 
         
-        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        // const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         let templatePath;
         let outputPathSimple;
         let outputPathDuplicata;
@@ -47,15 +53,15 @@ exports.createConstat = async (req, res) => {
             outputPathSimple = path.join( __dirname,`../output/voitures/constat_${newConstat._id}.pdf`);
             outputPathDuplicata = path.join(__dirname,`../output/voitures/constat_${newConstat._id}_duplicata.pdf`);
             await fillPDF(templatePath, outputPathSimple, constatData.report);
-        } else if (vehicleType === 'boat') {
+        } else if (constatData.report.vehicleType === 'boat') {
             templatePath = path.join( __dirname,'../utils/template_bateau.pdf');
             outputPathSimple = path.join(__dirname, `../output/bateaux/constat_bateau_${newConstat._id}.pdf`);
             outputPathDuplicata = path.join(__dirname, `../output/bateaux/constat_bateau_${newConstat._id}_duplicata.pdf`);
-            await fillPDFBoat(templatePath, outputPathSimple, constatData);
+            await fillPDFBoat(templatePath, outputPathSimple, constatData.report);
         }
         
         await addDuplicataImage(outputPathSimple, outputPathDuplicata);
-        //await wait(13000);
+        
         newConstat.pdfUrls = {
             simple: outputPathSimple,
             duplicata: outputPathDuplicata,
