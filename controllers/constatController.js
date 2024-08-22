@@ -131,6 +131,35 @@ exports.getCarConstatById = async (req, res) => {
           res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
       }
   };
-  
+
+
+exports.getConstatByRegion = async (req, res) => {
+  try {
+      const { region } = req.params;
+      const { vehicleType } = req.body;
+
+      let results;
+
+      if (vehicleType === 'car') {
+          results = await Constat.find({ region });
+      } else if (vehicleType === 'boat') {
+          results = await ConstatBateau.find({ region });
+      } else {
+          return res.status(400).send({ message: "Invalid vehicle type. Must be 'car' or 'boat'." });
+      }
+
+      if (results.length === 0) {
+          return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
+      }
+
+      res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, data: results });
+  } catch (err) {
+      res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
+  }
+};
+
+
+
+
 
 

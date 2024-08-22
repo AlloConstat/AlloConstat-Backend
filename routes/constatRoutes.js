@@ -17,6 +17,6 @@ router.put('/cars/:id', constatController.updateCarConstatById);
 
 // Route delete
 router.delete('/:id', constatController.deleteConstatById);
-
+router.get('/:region', constatController.getConstatByRegion);
 
 module.exports = router;
