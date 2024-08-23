@@ -15,7 +15,7 @@ const ConstatBateauSchema = new Schema({
     timestamp: { type: Date, default: Date.now },
     nbrbateaux: { type: Number, default: 1 },
     vehicleType: {type: String},
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    userId: { type: String },
     bateauA: { type: String },
     bateauB: { type: String },
 });

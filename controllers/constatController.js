@@ -159,6 +159,22 @@ exports.getConstatByRegion = async (req, res) => {
 };
 
 
+exports.getBoatConstatDuplicata = async (req, res) => {
+  try {
+      const { id } = req.params;
+
+      const constat = await ConstatBateau.findOne({ UserId: id });
+
+      if (!constat || !constat.pdfUrls || !constat.pdfUrls.duplicata) {
+          return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
+      }
+      res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, data: { duplicata: constat.pdfUrls.duplicata } });
+  } catch (err) {
+      res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
+  }
+};
+
+
 
 
 

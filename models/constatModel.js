@@ -16,7 +16,7 @@ const constatSchema = new mongoose.Schema({
     matriculeA: { type: String },
     matriculeB: { type: String },
     vehicleType: {type: String},
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    UserId: { type: String },
 });
 
 module.exports = mongoose.model('Constats', constatSchema);
