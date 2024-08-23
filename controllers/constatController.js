@@ -5,7 +5,7 @@ const ResponseModels = require('../models/responseModels');
 // Create Constat
 exports.getBoatConstats = async (req, res) => {
     try {
-      const boatConstats = await ConstatBateau.find({ vehicleType: 'boat' }); // Exemple de filtre par type
+      const boatConstats = await ConstatBateau.find(); // Exemple de filtre par type
       res.status(200).json(boatConstats);
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la récupération des constats de bateaux' });
@@ -131,6 +131,51 @@ exports.getCarConstatById = async (req, res) => {
           res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
       }
   };
-  
+
+
+exports.getConstatByRegion = async (req, res) => {
+  try {
+      const { region } = req.params;
+      const { vehicleType } = req.body;
+
+      let results;
+
+      if (vehicleType === 'car') {
+          results = await Constat.find({ region });
+      } else if (vehicleType === 'boat') {
+          results = await ConstatBateau.find({ region });
+      } else {
+          return res.status(400).send({ message: "Invalid vehicle type. Must be 'car' or 'boat'." });
+      }
+
+      if (results.length === 0) {
+          return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
+      }
+
+      res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, data: results });
+  } catch (err) {
+      res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
+  }
+};
+
+
+exports.getBoatConstatDuplicata = async (req, res) => {
+  try {
+      const { id } = req.params;
+
+      const constat = await ConstatBateau.findOne({ UserId: id });
+
+      if (!constat || !constat.pdfUrls || !constat.pdfUrls.duplicata) {
+          return res.status(ResponseModels.NOT_FOUND.status).send(ResponseModels.NOT_FOUND);
+      }
+      res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, data: { duplicata: constat.pdfUrls.duplicata } });
+  } catch (err) {
+      res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
+  }
+};
+
+
+
+
 
 

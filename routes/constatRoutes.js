@@ -7,7 +7,7 @@ const { verifyToken } = require('../middleware/authMiddleware');
 router.get('/boats', constatController.getBoatConstats);
 router.get('/boats/:id', constatController.getBoatConstatById);
 router.put('/boats/:id', constatController.updateBoatConstatById);
-
+router.get('/boats/duplicata/:id',constatController.getBoatConstatDuplicata)
 
 // Route pour les constats de voitures
 router.get('/cars', constatController.getCarConstats);
@@ -17,6 +17,6 @@ router.put('/cars/:id', constatController.updateCarConstatById);
 
 // Route delete
 router.delete('/:id', constatController.deleteConstatById);
-
+router.get('/:region', constatController.getConstatByRegion);
 
 module.exports = router;

@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
     mot_de_passe: { type: String, required: true },
     telephone: { type: String, required: true },
     region: { type: String, required: true },
-    role: { type: String, enum: [ 'admin', 'superAdmin'], default: 'admin' },
+    role: { type: String, enum: [ 'admin', 'superAdmin', 'client'], default: 'client' },
 });
 
 UserSchema.pre('save', function (next) {

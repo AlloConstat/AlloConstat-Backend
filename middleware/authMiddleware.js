@@ -35,4 +35,4 @@ const isSuperAdmin = async (req, res, next) => {
     }
 };
 
-module.exports = { verifyToken, isAdmin };
+module.exports = { verifyToken, isAdmin, isSuperAdmin };

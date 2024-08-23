@@ -14,7 +14,7 @@ exports.createConstat = async (req, res) => {
         if (constatData.report.vehicleType === 'car') {
 
             newConstat = new Constat({
-                userId,
+                userId : req.params.id,
                 vehicleType: vehicleType,
                 nbrVehicles :  constatData.report.vehicles.length,
                 matriculeA : constatData.report.vehicles[0].numero_immatriculation,
@@ -42,8 +42,6 @@ exports.createConstat = async (req, res) => {
             return res.status(ResponseModels.BAD_REQUEST.status).send({ ...ResponseModels.BAD_REQUEST, message: 'Invalid vehicle type' });
         }
 
-        
-        // const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         let templatePath;
         let outputPathSimple;
         let outputPathDuplicata;
@@ -66,7 +64,6 @@ exports.createConstat = async (req, res) => {
             simple: outputPathSimple,
             duplicata: outputPathDuplicata,
         };
-        console.log('new constat ',newConstat)
 
         await newConstat.save();
 
