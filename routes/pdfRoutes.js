@@ -3,7 +3,7 @@ const router = express.Router();
 const pdfController = require('../controllers/pdfController');
 const { verifyToken, isAdmin, isSuperAdmin } = require('../middleware/authMiddleware');
 
-router.post('/generate',[verifyToken, isAdmin] , pdfController.createConstat);
+router.post('/generate' , pdfController.createConstat);
 
 
 

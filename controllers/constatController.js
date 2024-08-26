@@ -5,7 +5,7 @@ const ResponseModels = require('../models/responseModels');
 // Create Constat
 exports.getBoatConstats = async (req, res) => {
     try {
-      const boatConstats = await ConstatBateau.find(); // Exemple de filtre par type
+      const boatConstats = await ConstatBateau.find(); 
       res.status(200).json(boatConstats);
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la récupération des constats de bateaux' });
@@ -14,7 +14,7 @@ exports.getBoatConstats = async (req, res) => {
   
   exports.getCarConstats = async (req, res) => {
     try {
-      const carConstats = await Constat.find(); // Exemple de filtre par type
+      const carConstats = await Constat.find(); 
       res.status(200).json(carConstats);
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la récupération des constats de voitures' });
@@ -173,9 +173,3 @@ exports.getBoatConstatDuplicata = async (req, res) => {
       res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
   }
 };
-
-
-
-
-
-

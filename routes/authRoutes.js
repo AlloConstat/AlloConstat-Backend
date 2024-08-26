@@ -6,7 +6,7 @@ const { verifyToken, isAdmin, isSuperAdmin } = require('../middleware/authMiddle
 
 
 
-router.post('/register',[verifyToken ], authController.register);
+router.post('/register', authController.register);
 router.post('/login', authController.login);
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

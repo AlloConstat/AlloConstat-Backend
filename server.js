@@ -13,6 +13,7 @@ const userRoutes = require('./routes/userRoutes.js');
 const constatRoutes = require('./routes/constatRoutes.js');
 const vehiculeRoutes = require('./routes/vehiculeRoutes.js');
 const pdfRoutes = require('./routes/pdfRoutes');
+const messageRoutes = require('./routes/messageRoutes.js');
 const cors = require('cors')
 app.use(cors());
 
@@ -29,7 +30,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/constats', constatRoutes);
 app.use('/api/vehicules', vehiculeRoutes);
 app.use('/api/pdf', pdfRoutes);
-
+app.use('/api/messages', messageRoutes);
 
 
 const PORT = process.env.PORT || 3000;
