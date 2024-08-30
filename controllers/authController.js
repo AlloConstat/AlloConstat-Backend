@@ -1,77 +1,112 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
-const ResponseModels = require('../models/responseModels');
-require('dotenv').config();
-const passport = require('passport');
+const jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
+const ResponseModels = require("../models/responseModels");
+require("dotenv").config();
+const passport = require("passport");
 
 exports.register = async (req, res) => {
-    const { nom, prenom, email, mot_de_passe, telephone, region, role } = req.body;
+  const { nom, prenom, email, mot_de_passe, telephone, region, role } =
+    req.body;
+  console.log("ggggg");
+  try {
+    let user = await User.findOne({ email });
 
-    try {
-        let user = await User.findOne({ email });
-        if (user) return res.status(ResponseModels.CONFLICT.status).send(ResponseModels.CONFLICT);
+    console.log("ghhhh");
+    if (user)
+      return res
+        .status(ResponseModels.CONFLICT.status)
+        .send(ResponseModels.CONFLICT);
 
-        user = new User({
-            nom,
-            prenom,
-            email,
-            mot_de_passe,
-            telephone,
-            region,
-            role: role || 'user',
-        });
+    user = new User({
+      nom,
+      prenom,
+      email,
+      mot_de_passe,
+      telephone,
+      region,
+      role: role || "client",
+    });
 
-        await user.save();
+    await user.save();
 
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
-        res.status(ResponseModels.SUCCESS.status).send({ ...ResponseModels.SUCCESS, token });
-    } catch (err) {
-        res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
-    }
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+    res
+      .status(ResponseModels.SUCCESS.status)
+      .send({ ...ResponseModels.SUCCESS, token });
+  } catch (err) {
+    res
+      .status(ResponseModels.INTERNAL_SERVER_ERROR.status)
+      .send(ResponseModels.INTERNAL_SERVER_ERROR);
+  }
 };
 
 exports.login = async (req, res) => {
-    const { email, mot_de_passe } = req.body;
+  const { email, mot_de_passe } = req.body;
 
-    try {
-        const user = await User.findOne({ email });
-        if (!user || !user.comparePassword(mot_de_passe)) {
-            return res.status(ResponseModels.UNAUTHORIZED.status).send(ResponseModels.UNAUTHORIZED);
-        }
-
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
-
-        // Retourner l'objet user entier avec le token
-        res.status(ResponseModels.SUCCESS.status).send({
-            ...ResponseModels.SUCCESS,
-            token,
-            user: user.toObject() // Utilisation de toObject() pour convertir l'instance Mongoose en objet JavaScript simple
-        });
-    } catch (err) {
-        res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
+  try {
+    const user = await User.findOne({ email });
+    if (!user || !user.comparePassword(mot_de_passe)) {
+      return res
+        .status(ResponseModels.UNAUTHORIZED.status)
+        .send(ResponseModels.UNAUTHORIZED);
     }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    // Retourner l'objet user entier avec le token
+    res.status(ResponseModels.SUCCESS.status).send({
+      ...ResponseModels.SUCCESS,
+      token,
+      user: user.toObject(), // Utilisation de toObject() pour convertir l'instance Mongoose en objet JavaScript simple
+    });
+  } catch (err) {
+    res
+      .status(ResponseModels.INTERNAL_SERVER_ERROR.status)
+      .send(ResponseModels.INTERNAL_SERVER_ERROR);
+  }
 };
 
-
 // Authentification avec Google OAuth
-exports.googleAuth = passport.authenticate('google', { scope: ['profile', 'email'] });
+exports.googleAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
 
 // Callback de Google OAuth
 exports.googleAuthCallback = (req, res, next) => {
-    passport.authenticate('google', { failureRedirect: '/login' }, (err, user) => {
-        if (err) {
-            return res.status(ResponseModels.INTERNAL_SERVER_ERROR.status).send(ResponseModels.INTERNAL_SERVER_ERROR);
-        }
-        if (!user) {
-            return res.status(ResponseModels.UNAUTHORIZED.status).send(ResponseModels.UNAUTHORIZED);
-        }
+  passport.authenticate(
+    "google",
+    { failureRedirect: "/login" },
+    (err, user) => {
+      if (err) {
+        return res
+          .status(ResponseModels.INTERNAL_SERVER_ERROR.status)
+          .send(ResponseModels.INTERNAL_SERVER_ERROR);
+      }
+      if (!user) {
+        return res
+          .status(ResponseModels.UNAUTHORIZED.status)
+          .send(ResponseModels.UNAUTHORIZED);
+      }
 
-        // Créer un token JWT
-        const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRES_IN
-        });
+      // Créer un token JWT
+      const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: process.env.JWT_EXPIRES_IN,
+        }
+      );
 
-        // Redirection ou réponse après authentification réussie
-        res.redirect(`/profile?token=${token}`); // Remplacez par l'URL souhaitée après l'authentification réussie
-    })(req, res, next);
+      // Redirection ou réponse après authentification réussie
+      res.redirect(`/profile?token=${token}`); // Remplacez par l'URL souhaitée après l'authentification réussie
+    }
+  )(req, res, next);
 };

@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const pdfController = require('../controllers/pdfController');
-const { verifyToken, isAdmin, isSuperAdmin } = require('../middleware/authMiddleware');
+const pdfController = require("../controllers/pdfController");
+const {
+  verifyToken,
+  isAdmin,
+  isSuperAdmin,
+} = require("../middleware/authMiddleware");
 
-router.post('/generate' , pdfController.createConstat);
-
-
+router.post("/generate/:id", pdfController.createConstat);
 
 module.exports = router;
