@@ -13,6 +13,7 @@ router.get("/boats/duplicata/:id", constatController.getBoatConstatDuplicata);
 router.get("/cars", constatController.getCarConstats);
 router.get("/cars/:id", constatController.getCarConstatById);
 router.put("/cars/:id", constatController.updateCarConstatById);
+router.get("/cars/duplicata/:id", constatController.getCarConstatDuplicata);
 
 // Route delete
 router.delete("/:id", constatController.deleteConstatById);
