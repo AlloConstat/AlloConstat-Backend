@@ -215,11 +215,9 @@ exports.getBoatConstatDuplicata = async (req, res) => {
 
     console.log("User ID is", id);
 
-    // Trouver tous les documents correspondant à userId
     const constats = await ConstatBateau.find({ userId: id });
 
     console.log(constats);
-    // Vérifier que des documents ont été trouvés
     if (constats.length === 0) {
       return res
         .status(ResponseModels.NOT_FOUND.status)
@@ -228,7 +226,31 @@ exports.getBoatConstatDuplicata = async (req, res) => {
 
     res.status(200).json(constats);
   } catch (err) {
-    console.error("Error fetching duplicata:", err); // Loguer l'erreur pour le débogage
+    console.error("Error fetching duplicata:", err);
+    res
+      .status(ResponseModels.INTERNAL_SERVER_ERROR.status)
+      .send(ResponseModels.INTERNAL_SERVER_ERROR);
+  }
+};
+
+exports.getCarConstatDuplicata = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log("User ID is", id);
+
+    const constats = await Constat.find({ userId: id });
+
+    console.log(constats);
+    if (constats.length === 0) {
+      return res
+        .status(ResponseModels.NOT_FOUND.status)
+        .send(ResponseModels.NOT_FOUND);
+    }
+
+    res.status(200).json(constats);
+  } catch (err) {
+    console.error("Error fetching duplicata:", err);
     res
       .status(ResponseModels.INTERNAL_SERVER_ERROR.status)
       .send(ResponseModels.INTERNAL_SERVER_ERROR);
