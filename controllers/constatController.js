@@ -1,6 +1,7 @@
 const Constat = require("../models/constatModel");
 const ConstatBateau = require("../models/bateauModels");
 const ResponseModels = require("../models/responseModels");
+const User = require("../models/userModel"); // Make sure to import the User model
 
 // Create Constat
 exports.getBoatConstats = async (req, res) => {
@@ -233,26 +234,72 @@ exports.getBoatConstatDuplicata = async (req, res) => {
   }
 };
 
-exports.getCarConstatDuplicata = async (req, res) => {
+exports.getCarConstatUser = async (req, res) => {
   try {
     const { id } = req.params;
 
     console.log("User ID is", id);
 
-    const constats = await Constat.find({ userId: id });
+    const user = await User.findById(id);
 
-    console.log(constats);
-    if (constats.length === 0) {
+    if (!user || user.constats.length === 0) {
       return res
         .status(ResponseModels.NOT_FOUND.status)
         .send(ResponseModels.NOT_FOUND);
     }
 
-    res.status(200).json(constats);
+    // Return all constats of the user
+    res.status(200).json(user.constats);
   } catch (err) {
-    console.error("Error fetching duplicata:", err);
+    console.error("Error fetching constats:", err);
     res
       .status(ResponseModels.INTERNAL_SERVER_ERROR.status)
       .send(ResponseModels.INTERNAL_SERVER_ERROR);
+  }
+};
+
+exports.addConstatToUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log("user id", req.body.constat);
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    //  Verify if the Constat exists
+    const constat = await Constat.findById(req.body.constat);
+    if (!constat) {
+      return res.status(404).json({
+        message: "Constat not found",
+      });
+    }
+
+    //  Add the constatId to the user's constats array if it's not already there
+    if (!user.constats.includes(req.body.constat)) {
+      user.constats.push(req.body.constat);
+    } else {
+      return res.status(400).json({
+        message: "Constat already added to this user",
+      });
+    }
+
+    //  Save the updated user document
+    await user.save();
+
+    res.status(200).json({
+      message: "Constat successfully added to user",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error adding constat to user:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };

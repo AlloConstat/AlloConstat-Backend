@@ -5,6 +5,7 @@ const { fillPDFBoat } = require("../utils/pdfUtilsBoat.js");
 const Constat = require("../models/constatModel");
 const ConstatBateau = require("../models/bateauModels");
 const ResponseModels = require("../models/responseModels");
+const User = require("../models/userModel"); // Make sure to import the User model
 
 exports.createConstat = async (req, res) => {
   try {
@@ -82,6 +83,16 @@ exports.createConstat = async (req, res) => {
 
     await newConstat.save();
 
+    // Find the user and add the constat ID to the user's constats array
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res
+        .status(ResponseModels.NOT_FOUND.status)
+        .send({ ...ResponseModels.NOT_FOUND, message: "User not found" });
+    }
+
+    user.constats.push(newConstat._id);
+    await user.save();
     res
       .status(ResponseModels.CREATED.status)
       .send({ ...ResponseModels.CREATED, data: newConstat });
